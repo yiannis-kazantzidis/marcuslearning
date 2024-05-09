@@ -1,20 +1,217 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect, createContext } from "react";
+import * as Font from "expo-font";
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NavigationContainer } from "@react-navigation/native";
+import SplashScreen from "./components/splash";
+import Login from "./routes/login";
+import Home from "./routes/home";
+import Folder from "./routes/folder";
+import Note from "./routes/note";
+import { View } from "react-native";
+import { supabase } from "./supabase/supabase";
+import userContext from "./components/userContext";
+import Flashcard from "./routes/flashcard";
+import { CardStyleInterpolators } from '@react-navigation/stack';
+import MultipleChoice from "./routes/multiplechoice";
+import ExamQuestion from "./routes/examquestion";
+import Assistant from "./routes/assistant";
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [userID, setUserID] = useState(null);
+  const [folders, setFolders] = useState(null);
+  const [notes, setNotes] = useState(null);
+  const Stack = createStackNavigator();
+
+  const checkAuth = async() => {
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log('this is the current id ' + userID)
+
+    if (!userID) {
+      if (session?.user) {
+        setUserID(session.user.id)
+        console.log('here is the ID: ' + session.user.id)
+        return session.user.id
+      } 
+    }
+  }
+
+  useEffect(() => {
+    console.log('userID changed:', userID);
+    // Perform any necessary actions or state updates based on the new userID value
+  }, [userID]);
+
+  const getFolders = async () => {
+    const { data, error } = await supabase
+      .from("folders")
+      .select("*")
+      .eq("user_id", userID);
+
+      console.log('console log ' + userID)
+
+      console.log('new folder update ' + data)
+
+      
+
+    setFolders(data);
+  };
+
+  const getNotes = async () => {
+    const { data, error } = await supabase
+      .from("notes")
+      .select("*")
+      .eq("user_id", userID);
+
+    setNotes(data);
+  };
+
+  useEffect(() => {
+    const loadFonts = async () => {
+      await Font.loadAsync({
+        "Recoleta-Medium": require("./assets/fonts/Recoleta-Medium.ttf"),
+        "Recoleta-SemiBold": require("./assets/fonts/Recoleta-SemiBold.ttf"),
+        "Recoleta-Regular": require("./assets/fonts/Recoleta-Regular.ttf"),
+        "Montserrat-Medium": require("./assets/fonts/marlin-sq-medium.ttf"),
+        "Montserrat-SemiBold": require("./assets/fonts/marlin-sq-bold.ttf"),
+        "Montserrat-Bold": require("./assets/fonts/marlin-sq-extrabold.ttf"),
+      });
+      setFontsLoaded(true);
+    };
+
+    loadFonts();
+
+    if (userID) {
+      getFolders();
+      getNotes();
+    }
+
+    console.log('this is the new id' + userID)
+  }, [userID]);
+
+  useEffect(() => {
+    const initnotes = async () => {
+      const { data, error } = await supabase
+        .from("notes")
+        .select("*")
+        .eq("user_id", userID);
+  
+      setNotes(data);
+    };
+
+    let channel = supabase
+      .channel("notes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notes", filter: `user_id=eq.${userID}` },
+        (payload) => {
+          initnotes();
+          console.log("Received update:", payload);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, []);
+  
+  useEffect(() => {
+    const initfolders = async (userId) => {
+      const { data, error } = await supabase
+        .from("folders")
+        .select("*")
+        .eq("user_id", userId);
+  
+      console.log('console log ' + userId);
+      console.log('new folder update ' + data);
+  
+      setFolders(data);
+    };
+  
+    let channel = supabase
+      .channel("folders")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "folders", filter: `user_id=eq.${userID}` },
+        (payload) => {
+          initfolders(userID);
+          console.log("Received update:", payload);
+        },
+      )
+      .subscribe();
+  
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [userID]);
+
+  if (!fontsLoaded) {
+    return <SplashScreen />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <userContext.Provider value={{ userID, setUserID, folders, setFolders, notes, setNotes }}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="Folder"
+            component={Folder}
+            options={{ headerShown: true }}
+          />
+
+          <Stack.Screen
+            name="Note"
+            component={Note}
+            options={{ headerShown: true }}
+          />      
+
+          <Stack.Screen
+            name="Flashcard"
+            component={Flashcard}
+            options={{ headerShown: true }}
+          />      
+
+          <Stack.Group screenOptions={{presentation: 'modal'}}>
+            <Stack.Screen
+              name="MultipleChoice"
+              component={MultipleChoice}
+              options={{ headerShown: true }}
+            />      
+          </Stack.Group>
+
+          <Stack.Group screenOptions={{presentation: 'modal'}}>
+            <Stack.Screen
+              name="ExamQuestion"
+              component={ExamQuestion}
+              options={{ headerShown: true }}
+            />      
+          </Stack.Group>
+
+          <Stack.Group screenOptions={{presentation: 'modal'}}>
+            <Stack.Screen
+              name="Assistant"
+              component={Assistant}
+              options={{ headerShown: true }}
+            />      
+          </Stack.Group>
+        
+        </Stack.Navigator>
+      </NavigationContainer>
+    </userContext.Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
