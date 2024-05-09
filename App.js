@@ -63,6 +63,9 @@ export default function App() {
       .select("*")
       .eq("user_id", userID);
 
+    console.log(userID)
+    console.log('new notes data' + data)
+
     setNotes(data);
   };
 
@@ -90,14 +93,19 @@ export default function App() {
   }, [userID]);
 
   useEffect(() => {
-    const initnotes = async () => {
+    const initnotes = async (userId) => {
+      if (!userId) {
+        userId = await checkAuth()
+      }
+
       const { data, error } = await supabase
         .from("notes")
         .select("*")
-        .eq("user_id", userID);
+        .eq("user_id", userId);
   
       setNotes(data);
     };
+
 
     let channel = supabase
       .channel("notes")
@@ -105,7 +113,7 @@ export default function App() {
         "postgres_changes",
         { event: "*", schema: "public", table: "notes", filter: `user_id=eq.${userID}` },
         (payload) => {
-          initnotes();
+          initnotes(userID);
           console.log("Received update:", payload);
         },
       )
@@ -120,6 +128,10 @@ export default function App() {
   
   useEffect(() => {
     const initfolders = async (userId) => {
+      if (!userId) {
+        userId = await checkAuth()
+      }
+      
       const { data, error } = await supabase
         .from("folders")
         .select("*")

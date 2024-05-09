@@ -5,8 +5,10 @@ import userContext from "../components/userContext";
 import Markdown from 'react-native-markdown-display';
 import { supabase } from "../supabase/supabase";
 import ShakeEventExpo from "../components/shakeevent";
+import { CommonActions } from '@react-navigation/native';
 
 export default function Note({navigation}) {
+    const [showFullText, setShowFullText] = useState(false);
     const route = useRoute();
     const [questions, setQuestions] = useState(null)
     const [questionID, setQuestionID] = useState(null)
@@ -24,6 +26,19 @@ export default function Note({navigation}) {
 
     const openQuestions = async() => {
         navigation.navigate('MultipleChoice', {id: noteID, title: title})
+    }
+
+    const toggleShowFullText = () => {
+        setShowFullText(!showFullText);
+    };
+
+    const deleteNote = async() => {
+        const { data, error } = await supabase
+            .from('notes')
+            .delete()
+            .eq('id', noteID)
+
+        navigation.dispatch(CommonActions.goBack());
     }
 
     useEffect(() => {
@@ -54,6 +69,9 @@ export default function Note({navigation}) {
     return (
         <View className={"bg-[#fefaec] p-4 flex-1"}>
             <Text className='text-green-900 font-recmed text-3xl'>{title}</Text>
+            <TouchableOpacity onPress={() => deleteNote()}>
+                <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Note</Text>
+            </TouchableOpacity>
             <View className="flex-row gap-x-4">
                 <TouchableOpacity className="w-12 h-12 shadow-xl shadow-black/25 bg-[#fefaec] rounded-xl border-2 border-green-800 p-4" onPress={() => {
                     openFlashcards()
@@ -92,32 +110,34 @@ export default function Note({navigation}) {
                 </TouchableOpacity>
             </View>
             <ScrollView className='my-4'>
-            <Markdown
-                style={markdownStyles}>
-                {content}
-            </Markdown>
+                <Markdown
+                    maxTopLevelChildren={showFullText ? undefined : 6} // Limit the number of top-level children
+                    style={markdownStyles}>
+                    {content}
+                </Markdown>
 
-            <Text className='font-recmed text-3xl mt-5 text-green-800'>Exam Questions</Text>
+                <TouchableOpacity onPress={toggleShowFullText}>
+                    <Text className='font-recmed underline text-green-800 text-center'>{showFullText ? 'Show Less' : 'Show More'}</Text>
+                </TouchableOpacity>
 
-            <View className='flex-1 flex-col gap-y-4 py-5 mb-5'>
+                <Text className='font-recmed text-3xl mt-5 text-green-800'>Exam Questions</Text>
+                <View className='flex-1 flex-col gap-y-4 py-5'>
 
+                    {
+                        questions ? questions.questions.map((v, k) => {
 
-                {
-                    questions ? questions.questions.map((v, k) => {
+                            return (
+                                <TouchableOpacity key={k} className="h-max shadow-md shadow-black/10 bg-[#fefaec] border-2 border-green-800/50 rounded-xl p-4" onPress={() => {
+                                    navigation.navigate('ExamQuestion', {data: v, noteID, questionID, id: k})
+                                }}>                                
+                                    <Text className='font-recmed text-md'>{v.question + ' (' + v.markScheme.totalMarks + ' marker)'}</Text>
+                                </TouchableOpacity>
 
-                        return (
-                            <TouchableOpacity key={k} className="h-20 shadow-md shadow-black/10 bg-[#fefaec] border-2 border-green-800/20 rounded-xl p-4" onPress={() => {
-                                navigation.navigate('ExamQuestion', {data: v, noteID, questionID, id: k})
-                            }}>                                
-                                <Text className='font-recmed text-md'>{v.question + ' (' + v.markScheme.totalMarks + ' marker)'}</Text>
-                            </TouchableOpacity>
+                            )
+                        }) : ''
+                    }
 
-                        )
-                    }) : ''
-                }
-
-            </View>
-
+                </View>
             </ScrollView>
         </View>
     )

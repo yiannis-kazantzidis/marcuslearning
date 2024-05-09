@@ -56,7 +56,7 @@ export default function Files({ navigation }) {
   );
 
   // variables
-  const snapPoints = useMemo(() => ["30%"], []);
+  const snapPoints = useMemo(() => ["35%"], []);
 
   // callbacks
   const handlePresentModalPress = useCallback(() => {
@@ -129,19 +129,12 @@ export default function Files({ navigation }) {
   return (
     <GestureHandlerRootView style={styles.container}>
       <View className={"bg-[#fefaec] p-5 flex-1"}>
-        <View className={"flex flex-row justify-between"}>
-          <TextInput className={"text-4xl font-recmed text-[#007d56]"}>
-            {name}
-          </TextInput>
-          <TouchableOpacity
-            onPress={() => deleteFolder()}
-            className={`inline-flex flex-row items-center justify-center max-w-[256px] bg-[#e75436] rounded-lg pt-1 px-5 py-2`}
-          >
-            <Text className={"font-montmed text-white text-center text-lg"}>
-              {"Delete"}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TextInput className={"font-recmed text-3xl text-green-900"}>
+          {name}
+        </TextInput>
+        <TouchableOpacity onPress={() => deleteFolder()}>
+              <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Folder</Text>
+        </TouchableOpacity>
 
         {filteredFolders
           ? filteredFolders.map((v, k) => {
@@ -201,7 +194,24 @@ export default function Files({ navigation }) {
         ) : (
           ""
         )}
+
       </View>
+
+      { filteredFolders[0] ? (
+          <TouchableOpacity
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+              handleOpenPress();
+            }}
+            className='bg-[#fefaec] shadow-xl shadow-black/50 justify-center items-center p-8'
+          >
+              <Text className={"font-montsemibold text-2xl text-green-800"}>
+                Create Folder
+              </Text>
+          </TouchableOpacity>
+
+        ) : ""
+      }
 
       <BottomSheet
         ref={bottomSheetRef}

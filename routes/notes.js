@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   TextInput,
+  ScrollView
 } from "react-native";
 import folderContext from "../components/folderContext";
 import {
@@ -264,8 +265,9 @@ export default function Notes({ navigation }) {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View className={"bg-[#fefaec] p-5 flex-1"}>
+      <View className={"bg-[#fefaec] flex-1"}>
         <View className={"flex flex-row justify-between"}></View>
+        <ScrollView className='px-4 my-4'>
           <View className="flex-row flex-wrap gap-y-4 gap-x-4">
             {filteredNotes
                 ? filteredNotes.map((v, k) => {
@@ -277,7 +279,7 @@ export default function Notes({ navigation }) {
                           content: v.content,
                           folder_id: v.folder_id,
                         })
-                      } key={k} className="min-w-[45.66%] max-w-[45.66%] h-32 shadow-xl shadow-black/25 bg-[#fefaec] rounded-xl border-2 border-green-800 flex-1 items-center justify-center p-4">
+                      } key={k} className="min-w-[45.66%] max-w-[45.66%] h-32 bg-[#fefaec] rounded-xl border-2 border-green-800 flex-1 items-center justify-center p-4">
                         <View
                           className={
                             "w-24 h-24 flex justify-center items-center p-4 rounded-xl"
@@ -293,6 +295,7 @@ export default function Notes({ navigation }) {
                   })
                 : ""}
           </View>
+          </ScrollView>
 
         {!filteredNotes[0]? (
           <View className={"justify-center items-center flex-1"}>
@@ -325,16 +328,11 @@ export default function Notes({ navigation }) {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
               handleOpenPress();
             }}
+            className='bg-[#fefaec] shadow-xl shadow-black/50 justify-center items-center p-8'
           >
-            <View
-              className={
-                "shadow-xl shadow-black/50 bg-[#fefaec] justify-center items-center p-8 rounded-2xl"
-              }
-            >
               <Text className={"font-montsemibold text-2xl text-green-800"}>
                 Create Note
               </Text>
-            </View>
           </TouchableOpacity>
 
         ) : ""
