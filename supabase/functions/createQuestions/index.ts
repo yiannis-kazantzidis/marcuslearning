@@ -49,11 +49,12 @@ Deno.serve(async (req) => {
 
   const { content, noteID, userID } = await req.json()
 
+  const newPrompt = "Please analyze the provided text and create exam-style questions that are each worth 2 marks, suitable for the UK Education System (A Levels / GCSE). The questions should focus on assessing straightforward factual recall, definitions, or simple applications of concepts from the text. Each question should be concise, with the mark scheme criteria narrow in scope and targeted to specific pieces of information or basic concepts covered in the text. Generate a JSON object with the following structure: { 'questions': [{ 'question': '(Concise 2-mark question text focused on definitions, facts or simple applications)', 'difficultyLevel': '(easy, medium, or hard)', 'markScheme': { 'totalMarks': 2, 'rubric': [{ 'criteria': '(Specific criterion for earning 1 mark, e.g. States/Identifies/Defines X)', 'marks': 1 }, { 'criteria': '(Specific criterion for earning 1 mark, e.g. Gives an example of X)', 'marks': 1 }] } }, { 'question': '(Another concise 2-mark question...)', ... }] } You may generate as many appropriate 2-mark questions as the provided text allows. The questions and mark scheme criteria should reflect what is typically seen for questions of this mark allocation on UK exam board assessments."
   const prompt = "Please analyze the provided text and create exam-style questions that are each worth 2 marks, suitable for the UK Education System (A Levels / GCSE). The questions should replicate what could come up in an exam. Each rubric you create should account for one mark, so there will be two criteria per question. Generate a JSON object with the following structure: { questions: [{ question: '(2-mark question text)', difficultyLevel: '(easy, medium, or hard)', markScheme: { totalMarks: 2, rubric: [{ criteria: '(criterion for 1 mark, e.g., Identifies one accurate advantage)', marks: 1 }, { criteria: '(criterion for 1 mark, e.g., Provides a relevant example)', marks: 1 }] } }, { question: '(another 2-mark question text)', difficultyLevel: '(easy, medium, or hard)', markScheme: { totalMarks: 2, rubric: [{ criteria: '(criterion for 1 mark)', marks: 1 }, { criteria: '(criterion for 1 mark)', marks: 1 }] } }] }. You may generate as many 2-mark questions as you deem appropriate based on the provided text."
 
   const response = await anthropic.messages.create({
     max_tokens: 4096,
-    system: prompt,
+    system: newPrompt,
     messages: [
       { role: "user", content: content }
     ],
