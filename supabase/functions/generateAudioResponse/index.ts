@@ -13,9 +13,13 @@ Deno.serve(async (req) => {
   const audioFile = formData.get('file') as File;
   const context = formData.get('context') || null
   const name = formData.get('name') || null
-  console.log(name)
   const messages = formData.get('messages');
   const messagesParsed = JSON.parse(messages);
+
+  console.log('name' + name)
+  console.log('context' + context)
+  console.log('messages' + messages)
+  console.log('messagesParsed' + messagesParsed)
 
   if (!audioFile) {
     console.log('failed operation')
@@ -37,6 +41,8 @@ Deno.serve(async (req) => {
     });
 
     console.log(transcription)
+    console.log(name)
+    console.log(context)
 
     let realtimeMessage = null
 

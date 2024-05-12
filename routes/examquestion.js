@@ -1,5 +1,5 @@
 import { useRoute } from "@react-navigation/native";
-import { Text, View, TextInput, StyleSheet } from "react-native";
+import { Text, View, TextInput, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import userContext from "../components/userContext";
 import { useState, useContext, useEffect } from "react";
@@ -131,8 +131,9 @@ export default function ExamQuestion({navigation}) {
 
             if (response.ok) {
                 const data = await response.json();
-                setMarkData(data.text)
-                console.log(data.text)
+                const parsedData = JSON.parse(data.text)
+                setMarkData(parsedData)
+                console.log(parsedData)
             } else {
                 throw new Error("Failed to extract text");
             }
@@ -160,14 +161,23 @@ export default function ExamQuestion({navigation}) {
 
     if (markData !== null) {
         return (
-            <View className={"bg-[#fefaec] p-5 flex-1 justify-center items-center"}>
-                <Text className='font-recmed text-lg text-center text-black'>
-                    {markData.feedback}
+            <View className={"bg-[#fefaec] p-5 flex-1 justify-center"}>
+                <Text className='font-recmed text-2xl text-center text-green-800'>
+                    {data.question}
                 </Text>
 
-                <Text className='font-recbold text-2xl text-center text-green-800'>
-                    {'marks: ' + markData.mark}
+                <View className='bg-black/5 p-4 rounded-xl m-5'>
+
+                <Text className='font-recregular text-2xl text-green-800'>
+                    {'Marks Awarded: ' + markData.mark}
                 </Text>
+
+                <Text className='font-recregular text-lg text-black'>
+                    {markData.feedback}
+                </Text>
+                </View>
+
+
             </View>
         )
 
@@ -175,30 +185,49 @@ export default function ExamQuestion({navigation}) {
 
 
     return (
-        <View className={"bg-[#fefaec] p-5 flex-1 justify-center items-center"}>
-            <Text className='font-recmed text-2xl text-center text-green-800'>
+      <KeyboardAvoidingView
+        behavior="padding"
+        keyboardVerticalOffset={100}
+        className={"bg-[#fefaec] flex-1"}
+      >
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <View className="p-5 flex-1">
+            <View className="flex-1 justify-center items-center w-full">
+              <Text className="font-recmed text-2xl text-center text-green-800">
                 {data.question}
-            </Text>
-
-            <TextInput placeholder="Enter your answer here" value={answer} multiline={true} onChangeText={(text) => setAnswer(text)} className='w-full h-48 border-2 text-lg border-green-800 rounded-lg m-5 p-2 font-recmed' />
-
-            <TouchableOpacity onPress={() => pickImage()}>
-
-                <Text>Upload Answer</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
+              </Text>
+              <TextInput
+                placeholder="Enter your answer here"
+                value={answer}
+                multiline={true}
+                onChangeText={(text) => setAnswer(text)}
+                className="w-full h-48 border-2 text-lg border-green-800 rounded-lg my-4 p-2 font-recmed"
+              />
+              <TouchableOpacity
+                className="border-green-800 border-2 pt-1 px-5 py-2 w-full rounded-lg mb-4"
+                onPress={() => pickImage()}
+              >
+                <Text className="text-center font-montmed text-xl">
+                  Upload Answer
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
                 disabled={loading}
-                className={`inline-flex flex-row items-center justify-center max-w-[256px] ${loading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'} rounded-lg pt-1 px-5 py-2 w-full`}
+                className={`inline-flex flex-row items-center justify-center max-w-[256px] ${
+                  loading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'
+                } rounded-lg pt-1 px-5 py-2 w-full`}
                 onPress={() => {
-                    markQuestion()
+                  markQuestion();
                 }}
-            >
-            <Text className={"font-montmed text-white text-center text-2xl"}>
-              {!loading ? "Mark Answer" : 'Marking Answer'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+              >
+                <Text className={"font-montmed text-white text-center text-2xl"}>
+                  {!loading ? "Mark Answer" : 'Marking Answer'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     )
 }
 

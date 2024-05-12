@@ -1,111 +1,210 @@
 import { StyleSheet, Text, View, TouchableOpacity, Button, TextInput } from 'react-native';
 import { supabase } from "../supabase/supabase";
 import * as Haptics from 'expo-haptics';
-import {useState, useEffect, useContext} from "react";
+import { useState, useEffect, useContext } from "react";
 import SplashScreen from "../components/splash";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import userContext from '../components/userContext';
+import * as AppleAuthentication from 'expo-apple-authentication';
 
-export default function Login({navigation}) {
-    const { setUserID } = useContext(userContext)
-    const [authLoading, setAuthLoading] = useState(true)
-    const [email, setEmail] = useState(null)
-    const [password, setPassword] = useState(null)
+export default function Login({ navigation }) {
+    const { setUserID } = useContext(userContext);
+    const [authLoading, setAuthLoading] = useState(true);
+    const [email, setEmail] = useState(null);
+    const [password, setPassword] = useState(null);
 
-    const checkAuth = async() => {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        await setAuthLoading(false)
-
-        if (session?.user) {
-            setUserID(session.user.id)
-            await navigation.navigate("Home");
-            return null;
-        } else {
-            await autoLogin()
-        }
-    }
-
-    const storeLogin = async (value) => {
+    const checkAndCreateUserRow = async (userId, email, name = null) => {
         try {
-            const jsonValue = JSON.stringify(value);
-            await AsyncStorage.setItem('supagrade_stored_data_login_details', jsonValue);
-
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const handleLogin = async (e, p) => {
-        const em = 'yianniskazantzidis@yandex.com'
-        const pass = 'Geforze1'
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: e,
-                password: p,
-            })
-
-            if (error) {
-                console.log("error")
-            } else {
-                await storeLogin({email: e, password: p})
-                checkAuth()
+          // Check if a row exists with the user's ID
+          const { data, error } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", userId)
+            .single();
+      
+          if (error) {
+            console.error("Error checking user row:", error);
+            return;
+          }
+      
+          // If no row exists, insert a new one
+          if (!data) {
+            const { error } = await supabase
+              .from("users")
+              .insert({ id: userId, email: email, username: name });
+      
+            if (insertError) {
+              console.error("Error inserting user row:", insertError);
+              return;
             }
-        }
-
-        catch (error) {
-            console.log(error)
-        }
-
-        finally {
-            console.log("finished")
-
-        }
-    }
-
-
-    const autoLogin = async () => {
-        try {
-            const value = await JSON.parse( await AsyncStorage.getItem('supagrade_stored_data_login_details'));
-
-            if (value !== null) {
-                await handleLogin(value.email, value.password)
-            } else {
-                console.log("value null")
-            }
-        } catch (e) {
-            console.log(e)
+      
+            console.log("New user row inserted successfully");
+          } else {
+            console.log("User row already exists");
+          }
+        } catch (error) {
+          console.error("Error checking/creating user row:", error);
         }
     };
 
-    useEffect( () => {
-        autoLogin()
-    }, []);
+    const checkAuth = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
 
+        await setAuthLoading(false);
+
+        if (session?.user) {
+            setUserID(session.user.id);
+            const value = JSON.parse(await AsyncStorage.getItem('onboarding_finished'));
+
+            if (value?.completed) {
+                console.log(value);
+                await navigation.navigate("Home");
+            } else {
+                const jsonValue = JSON.stringify({ completed: true });
+                await AsyncStorage.setItem('onboarding_finished', jsonValue);
+                await navigation.navigate("Onbarding");
+            }
+
+            return null;
+        }
+    };
+
+    const handleAppleSignIn = async () => {
+        try {
+            const credential = await AppleAuthentication.signInAsync({
+                requestedScopes: [
+                    AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                    AppleAuthentication.AppleAuthenticationScope.EMAIL,
+                ],
+            });
+
+            console.log('id token ' + credential.identityToken)
+            console.log(credential.fullName)
+            console.log('this is the full name: ' + credential.fullName.givenName + credential.fullName.familyName + credential.fullName.nickname)
+
+            if (credential.identityToken) {
+                console.log('id token valid')
+                await AsyncStorage.setItem('appleIdentityToken', credential.identityToken);
+
+                const { error, data } = await supabase.auth.signInWithIdToken({
+                    provider: 'apple',
+                    token: credential.identityToken
+                });
+
+                if (error) {
+                    console.log(error)
+                }
+
+                if (!error) {
+                    console.log('there is no error')
+                    const userEmail = data.user.user_metadata.email;
+                    const userID = data.user.id
+                    const name = credential.fullName
+                    console.log(`User's email: ${userEmail}`); // You can use the email here
+                    console.log(`User's ID: ${data.user.id}`); // You can use the email here
+                    console.log(`User's Name: ${name.givenName}`); // You can use the email here
+                    console.log(`User's Name Object: ${name}`); // You can use the email here
+
+
+
+                    await checkAndCreateUserRow(userID, userEmail, name)
+              
+
+
+                    console.log('user is signed in');
+                    await AsyncStorage.setItem('supabaseSession', JSON.stringify(data.session));
+
+                    console.log('authchecked')
+                    checkAuth();
+                }
+            } else {
+                throw new Error('No identityToken.');
+            }
+        } catch (e) {
+            if (e.code === 'ERR_REQUEST_CANCELED') {
+                // handle that the user canceled the sign-in flow
+            } else {
+                // handle other errors
+            }
+        }
+    };
+
+    const refreshAppleToken = async () => {
+        try {
+            const storedIdentityToken = await AsyncStorage.getItem('appleIdentityToken');
+            const storedSession = await AsyncStorage.getItem('supabaseSession');
+    
+            if (storedIdentityToken && storedSession) {
+                const session = JSON.parse(storedSession);
+                const expiresAt = session.expires_at;
+                const now = new Date().getTime() / 1000; // Get current time in seconds
+    
+                if (expiresAt < now) {
+                    const newCredential = await AppleAuthentication.refreshAsync();
+    
+                    if (newCredential.identityToken) {
+                        await AsyncStorage.setItem('appleIdentityToken', newCredential.identityToken);
+    
+                        const { data, error } = await supabase.auth.signInWithIdToken({
+                            provider: 'apple',
+                            token: newCredential.identityToken
+                        });
+    
+                        if (!error) {
+                            await AsyncStorage.setItem('supabaseSession', JSON.stringify(data.session));
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    useEffect(() => {
+        const initApp = async () => {
+            const storedSession = await AsyncStorage.getItem('supabaseSession');
+            const storedIdentityToken = await AsyncStorage.getItem('appleIdentityToken');
+
+            if (storedSession && storedIdentityToken) {
+                const session = JSON.parse(storedSession);
+                await supabase.auth.setSession(session);
+
+                await refreshAppleToken();
+                checkAuth()
+            }
+        };
+
+        initApp();
+    }, []);
 
     return (
         <View className={"bg-[#faf3ea] flex-1 justify-center items-center"}>
-            <Text className={"text-5xl text-[#0d3c26] font-recbold p-4"}>Marcus - Beta</Text>
+            <Text className={"text-7xl text-green-900 font-recmed p-4"}>Marcus</Text>
 
             <View className={"flex flex-col gap-y-2 items-center"}>
-                <TextInput className='bg-green-800/30 text-2xl p-2 w-max' onChangeText={(text) => setEmail(text)} placeholder='Email' />
-                <TextInput className='bg-green-800/30 text-2xl p-2 w-max' onChangeText={(text) => setPassword(text)} placeholder='Password' />
 
 
-
-
-                <TouchableOpacity
-                    className={"inline-flex flex-row items-center justify-center text-center max-w-[256px] bg-[#0d3c26] rounded-lg pt-2 py-2 px-5 w-screen"}
-                    onPress={() => handleLogin(email, password)}
-                >
-                    <Text
-                        className={"font-recregular text-white text-3xl"}
-
-                    >
-                        {"Login"}
-                    </Text>
-                </TouchableOpacity>
+                <AppleAuthentication.AppleAuthenticationButton
+                    buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+                    buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
+                    cornerRadius={5}
+                    style={styles.button}
+                    onPress={handleAppleSignIn}
+                />
             </View>
         </View>
-    )
+    );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    button: {
+        width: 220,
+        height: 64,
+    },
+});

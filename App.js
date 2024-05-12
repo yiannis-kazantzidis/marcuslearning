@@ -16,6 +16,7 @@ import { CardStyleInterpolators } from '@react-navigation/stack';
 import MultipleChoice from "./routes/multiplechoice";
 import ExamQuestion from "./routes/examquestion";
 import Assistant from "./routes/assistant";
+import Onbarding from "./routes/onboarding";
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -173,7 +174,12 @@ export default function App() {
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{ headerShown: true }}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Onbarding"
+            component={Onbarding}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Home"

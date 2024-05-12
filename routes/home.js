@@ -109,7 +109,7 @@ export default function Home({ navigation }) {
       <View className={"bg-[#fefaec] flex-1"}>
         <View className={"w-full h-24 flex justify-center p-5"}>
           <Text
-            className={"font-recbold text-green-800 text-5xl text-left"}
+            className={"font-recmed text-green-800 text-5xl text-left"}
           >
             Marcus
           </Text>

@@ -28,9 +28,9 @@ export default function Assistant({navigation}) {
     const getName = async() => {
       console.log(userID)
       const { data, err } = await supabase
-      .from('users')
-      .select('username')
-      .eq('id', userID) 
+        .from('users')
+        .select('username')
+        .eq('id', userID) 
 
       setUserName(data[0].username)
     }
@@ -129,13 +129,14 @@ export default function Assistant({navigation}) {
 
   const sendAudioToServer = async (uri) => {
     setIsLoading(true);
+    console.log('uri: ' + uri)
 
     try {
       const formData = new FormData();
       formData.append('file', {
         uri,
-        type: 'audio/wav',
-        name: 'audio.wav',
+        type: 'audio/m4a', // Update this line
+        name: 'audio.m4a', // Update the name as well
       });
 
       if (firstCommunication) {

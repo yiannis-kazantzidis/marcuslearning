@@ -16,7 +16,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yiannisk.marcuslearning"
+      "bundleIdentifier": "com.yiannisk.marcuslearning",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -38,7 +39,7 @@
       "url": "https://u.expo.dev/94a95cdd-212e-4285-9052-1a930b1ac590"
     },
     "plugins": [
-      "expo-font"
+      ["expo-apple-authentication", "expo-font"]
     ]
   }
 }

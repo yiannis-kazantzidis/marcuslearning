@@ -266,36 +266,38 @@ export default function Notes({ navigation }) {
   return (
     <GestureHandlerRootView style={styles.container}>
       <View className={"bg-[#fefaec] flex-1"}>
-        <View className={"flex flex-row justify-between"}></View>
-        <ScrollView className='px-4 my-4'>
-          <View className="flex-row flex-wrap gap-y-4 gap-x-4">
-            {filteredNotes
-                ? filteredNotes.map((v, k) => {
-                    return (
-                      <TouchableOpacity onPress={() =>
-                        navigation.navigate("Note", {
-                          id: v.id,
-                          title: v.title,
-                          content: v.content,
-                          folder_id: v.folder_id,
-                        })
-                      } key={k} className="min-w-[45.66%] max-w-[45.66%] h-32 bg-[#fefaec] rounded-xl border-2 border-green-800 flex-1 items-center justify-center p-4">
-                        <View
-                          className={
-                            "w-24 h-24 flex justify-center items-center p-4 rounded-xl"
-                          }
-                        >
-                          <Image source={fileImage} className={"w-full h-full opacity-40"} />
-                        </View>
-                        <View className='absolute'> 
-                          <Text className='font-montmed text-center text-md'>{v.title}</Text>
-                        </View>
-                      </TouchableOpacity>
-                    );
-                  })
-                : ""}
-          </View>
-          </ScrollView>
+
+        {filteredNotes[0] ? (
+          <ScrollView className='px-4 my-4'>
+            <View className="flex-row flex-wrap gap-y-4 gap-x-4">
+              {filteredNotes.map((v, k) => {
+                  return (
+                    <TouchableOpacity onPress={() =>
+                      navigation.navigate("Note", {
+                        id: v.id,
+                        title: v.title,
+                        content: v.content,
+                        folder_id: v.folder_id,
+                      })
+                    } key={k} className="min-w-[45.66%] max-w-[45.66%] h-32 bg-[#fefaec] rounded-xl border-2 border-green-800 flex-1 items-center justify-center p-4">
+                      <View
+                        className={
+                          "w-24 h-24 flex justify-center items-center p-4 rounded-xl"
+                        }
+                      >
+                        <Image source={fileImage} className={"w-full h-full opacity-40"} />
+                      </View>
+                      <View className='absolute'> 
+                        <Text className='font-montmed text-center text-md'>{v.title}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })
+              }
+            </View>
+        </ScrollView>
+        ) : ''}
+
 
         {!filteredNotes[0]? (
           <View className={"justify-center items-center flex-1"}>
@@ -321,22 +323,24 @@ export default function Notes({ navigation }) {
         ) : (
           ""
         )}
-      </View>
-      { filteredNotes[0] ? (
-          <TouchableOpacity
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-              handleOpenPress();
-            }}
-            className='bg-[#fefaec] shadow-xl shadow-black/50 justify-center items-center p-8'
-          >
-              <Text className={"font-montsemibold text-2xl text-green-800"}>
-                Create Note
-              </Text>
-          </TouchableOpacity>
 
-        ) : ""
-      }
+        { filteredNotes[0] ? (
+            <TouchableOpacity
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                handleOpenPress();
+              }}
+              className='bg-[#fefaec] shadow-xl shadow-black/50 justify-center items-center p-8'
+            >
+                <Text className={"font-montsemibold text-2xl text-green-800"}>
+                  Create Note
+                </Text>
+            </TouchableOpacity>
+
+          ) : ""
+        }
+      </View>
+
 
       <BottomSheet
         ref={bottomSheetRef}
