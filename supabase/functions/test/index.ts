@@ -1,6 +1,6 @@
-import { createClient } from "npm:@supabase/supabase-js@2.41.1";
+import { createClient } from "npm:@supabase/supabase-js@2.43.1";
 import Anthropic from 'npm:@anthropic-ai/sdk@0.20.6';
-import { jsonrepair } from 'npm:jsonrepair@3.6.1'
+import { jsonrepair } from 'npm:jsonrepair@3.7.1'
 import { YoutubeTranscript } from 'npm:youtube-transcript@1.2.1';
 
 Deno.serve(async (req) => {
@@ -14,17 +14,20 @@ Deno.serve(async (req) => {
         apiKey: ANTRHOPIC_API_KEY,
     });
 
-    async function extractJSON(text) {
+    async function extractJSON(text: string) {
+        console.log('extract json function has been called: ' + text)
         const jsonStart = text.indexOf('{');
         const jsonEnd = text.lastIndexOf('}') + 1;
         const jsonString = text.slice(jsonStart, jsonEnd);
       
         const repaired = jsonrepair(jsonString)
+        
     
-        console.log(repaired)
+        console.log('repaired: ' + repaired)
       
         try {
           const jsonObject = JSON.parse(repaired);
+          console.log('JSON OBJECT: ' + jsonObject)
           return jsonObject;
         } catch (error) {
           extractJSON(await TAEngine(text, error))

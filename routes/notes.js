@@ -4,7 +4,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  TextInput,
   ScrollView
 } from "react-native";
 import folderContext from "../components/folderContext";
@@ -16,8 +15,6 @@ import {
   useRef,
   useEffect,
 } from "react";
-import { useRoute } from "@react-navigation/native";
-import { useFocusEffect } from "@react-navigation/native";
 import { supabase } from "../supabase/supabase";
 import userContext from "../components/userContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -25,30 +22,23 @@ import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import { Shadow } from "react-native-shadow-2";
 import getFolderName from "../components/getFolderName.js";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-import { LinearGradient } from 'expo-linear-gradient';
 import AnimatedLoader from 'react-native-animated-loader';
 import LottieView from 'lottie-react-native';
-import OptionsMenu from "react-native-options-menu";
 import * as Clipboard from 'expo-clipboard';
+// Requires apple dev account so fucking gay
+// import ContextMenu from "react-native-context-menu-view";
 
 export default function Notes({ navigation }) {
   const { id, parent_id } = useContext(folderContext);
   const { userID, folders, setFolders, notes, setNotes } = useContext(userContext);
-  const [files, setFiles] = useState(null);
   const [name, setName] = useState(null);
-  const localImage = require("../assets/folder/folder-dynamic-color.png");
-  const sheetRef = useRef(null);
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [folderName, setFolderName] = useState("");
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null);
   const [youtubeURL, setYoutubeURL] = useState('');
-  const [extractedText, setExtractedText] = useState("");
   const [uploadChoice, setUploadChoice] = useState(null)
   const [snap, setSnap] = useState('50%');
   const [sp, setSp] = useState(['50%']);
@@ -376,6 +366,21 @@ export default function Notes({ navigation }) {
 
           ) || uploadChoice == 1 && (
             <View className='m-5 w-full'>
+              
+            
+              {/* Context Menu for Later (Requires apple dev account, so fucking gay) */}
+
+              {/* <ContextMenu
+                actions={[{ title: "Title 1" }, { title: "Title 2" }]}
+                onPress={(e) => {
+                  console.warn(
+                    `Pressed ${e.nativeEvent.name} at index ${e.nativeEvent.index}`
+                  );
+                }}
+              >
+                <View style={styles.yourOwnStyles} />
+              </ContextMenu> */}
+
             <TouchableOpacity onPress={() => pickImage()}
               className={
               `bg-black/5 inline-flex ${!image ? 'h-36' : 'h-max'}  rounded-lg border-2 border-green-800`
