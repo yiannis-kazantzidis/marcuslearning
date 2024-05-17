@@ -21,6 +21,7 @@ import * as Haptics from "expo-haptics";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetTextInput,
+  BottomSheetView
 } from "@gorhom/bottom-sheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import img from "../assets/folder-new/new-folder-dynamic-gradient.png";
@@ -101,8 +102,8 @@ export default function Home({ navigation }) {
   const localImage = require("../assets/folder/folder-dynamic-color.png");
   const img = require("../assets/folder-new/new-folder-dynamic-gradient.png");
 
-  const handleClosePress = () => bottomSheetRef.current?.close();
   const handleOpenPress = () => bottomSheetRef.current?.expand();
+  const handleClosePress = () => bottomSheetRef.current?.close();
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -187,15 +188,13 @@ export default function Home({ navigation }) {
         </View>
         <BottomSheet
           ref={bottomSheetRef}
-          snapPoints={snapPoints}
-          bottomInset={46}
+          snapPoints={[1]} // ********* HERE, Add a default snapPoint 1
+          enableDynamicSizing // ********* HERE Enable to dynamic sizing
           index={-1}
-          detached={true}
           style={styles.sheetContainer}
           backdropComponent={renderBackdrop}
-          backgroundStyle={{ backgroundColor: "#faf3ea" }}
         >
-          <View className={"flex-1 justify-center items-center"}>
+        <BottomSheetView style={{ flex: 0, minHeight: 100, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
             <Text className={"text-2xl font-montsemibold"}>
               Lets get this started 🎉
             </Text>
@@ -208,7 +207,7 @@ export default function Home({ navigation }) {
 
             <TouchableOpacity
               disabled={loading}
-              className={`${loading ? "opacity-50" : ""} inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2`}
+              className={`${loading ? "opacity-50" : ""} inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 mb-6`}
               onPress={async () => {
                 Haptics.notificationAsync(
                   Haptics.NotificationFeedbackType.Success,
@@ -221,7 +220,7 @@ export default function Home({ navigation }) {
                 {"Create Folder"}
               </Text>
             </TouchableOpacity>
-          </View>
+          </BottomSheetView>
         </BottomSheet>
       </View>
     </GestureHandlerRootView>
@@ -246,6 +245,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 24,
   },
 });

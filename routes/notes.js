@@ -21,6 +21,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetTextInput,
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import getFolderName from "../components/getFolderName.js";
 import * as Haptics from "expo-haptics";
@@ -40,8 +41,10 @@ export default function Notes({ navigation }) {
   const [image, setImage] = useState(null);
   const [youtubeURL, setYoutubeURL] = useState('');
   const [uploadChoice, setUploadChoice] = useState(null)
-  const [snap, setSnap] = useState('50%');
-  const [sp, setSp] = useState(['50%']);
+  const [snap, setSnap] = useState('CONTENT_HEIGHT');
+  const [sp, setSp] = useState(['CONTENT_HEIGHT']);
+
+
 
   const handleSnapPointChange = (changeVal) => {
     setSnap(changeVal || '35%');
@@ -259,7 +262,7 @@ export default function Notes({ navigation }) {
 
         {filteredNotes[0] ? (
           <ScrollView className='px-4 my-4'>
-            <View className="flex-row flex-wrap gap-y-4 gap-x-4">
+            <View className="flex-col gap-y-4">
               {filteredNotes.map((v, k) => {
                   return (
                     <TouchableOpacity onPress={() =>
@@ -269,17 +272,15 @@ export default function Notes({ navigation }) {
                         content: v.content,
                         folder_id: v.folder_id,
                       })
-                    } key={k} className="min-w-[45.66%] max-w-[45.66%] h-32 bg-[#fefaec] rounded-xl border-2 border-green-800 flex-1 items-center justify-center p-4">
-                      <View
-                        className={
-                          "w-24 h-24 flex justify-center items-center p-4 rounded-xl"
-                        }
-                      >
-                        <Image source={fileImage} className={"w-full h-full opacity-40"} />
-                      </View>
-                      <View className='absolute'> 
-                        <Text className='font-montmed text-center text-md'>{v.title}</Text>
-                      </View>
+                    } key={k} className="border-2 border-black/5 h-14 rounded-xl flex flex-row gap-x-1 items-center p-1 bg-white/25 px-2">
+
+                    <View
+                      className={
+                        "p-4 bg-green-600/70 flex justify-center items-center rounded-lg"
+                      }
+                    >
+                    </View>
+                        <Text className='font-montmed text-md pl-2'>{v.title}</Text>
                     </TouchableOpacity>
                   );
                 })
@@ -334,20 +335,18 @@ export default function Notes({ navigation }) {
 
       <BottomSheet
         ref={bottomSheetRef}
-        snapPoints={sp}
-        bottomInset={46}
+        snapPoints={[1]} // ********* HERE, Add a default snapPoint 1
+        enableDynamicSizing // ********* HERE Enable to dynamic sizing
         index={-1}
-        detached={true}
         style={styles.sheetContainer}
         backdropComponent={renderBackdrop}
         onClose={() => {
-          handleSnapPointChange('50%')
           setUploadChoice(null)
           setYoutubeURL('')
         }}
         backgroundStyle={{ backgroundColor: "#faf3ea" }}
       >
-        <View className={"flex-1 justify-center items-center max-w-[320]"}>
+        <BottomSheetView style={{ flex: 0, minHeight: 100, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
           <Text className={"text-2xl font-montsemibold"}>
             Create Notes With Marcus
           </Text>
@@ -410,7 +409,6 @@ export default function Notes({ navigation }) {
           )|| (
             <View className='flex flex-row w-max'>
               <TouchableOpacity onPress={() => {
-                handleSnapPointChange('55%')
                 setUploadChoice(1)
               }}
                 className={
@@ -424,7 +422,6 @@ export default function Notes({ navigation }) {
               </TouchableOpacity>
               
               <TouchableOpacity onPress={() => {
-                handleSnapPointChange('35%')
                 setUploadChoice(2)
               }}
                 className={
@@ -445,7 +442,7 @@ export default function Notes({ navigation }) {
 
           <TouchableOpacity
             disabled={loading}
-            className={`inline-flex flex-row items-center justify-center w-full ${loading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'} rounded-lg pt-1 px-5 py-2 max-w-[300]`}
+            className={`inline-flex h-14 flex-row items-center justify-center w-full ${loading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'} rounded-lg pt-1 px-5 py-2 max-w-[300] mb-6`}
             onPress={() => {
               if (uploadChoice == 2 && !youtubeURL) {
                 pasteYoutubeLink()
@@ -458,7 +455,7 @@ export default function Notes({ navigation }) {
               {(uploadChoice == 2 && !youtubeURL) && 'Paste Link' || !loading && "Create Notes" || 'Creating Notes'}
             </Text>
           </TouchableOpacity>
-        </View>
+        </BottomSheetView>
       </BottomSheet>
 
 
@@ -494,6 +491,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 24,
   },
 });

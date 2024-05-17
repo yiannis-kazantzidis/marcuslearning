@@ -23,6 +23,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetTextInput,
+  BottomSheetView
 } from "@gorhom/bottom-sheet";
 import * as Haptics from "expo-haptics";
 import getFolderName from "../components/getFolderName.js";
@@ -215,15 +216,14 @@ export default function Files({ navigation }) {
 
       <BottomSheet
         ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        bottomInset={46}
+        snapPoints={[1]} // ********* HERE, Add a default snapPoint 1
+        enableDynamicSizing // ********* HERE Enable to dynamic sizing
         index={-1}
-        detached={true}
         style={styles.sheetContainer}
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: "#faf3ea" }}
       >
-        <View className={"flex-1 justify-center items-center"}>
+        <BottomSheetView style={{ flex: 0, minHeight: 100, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
           <Text className={"text-2xl font-montsemibold"}>
             Lets get this started 🎉
           </Text>
@@ -235,7 +235,7 @@ export default function Files({ navigation }) {
           />
 
           <TouchableOpacity
-            className={`inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 w-full`}
+            className={`inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 w-full mb-6`}
             onPress={async () => {
               createSubject(folderName, id);
             }}
@@ -244,7 +244,7 @@ export default function Files({ navigation }) {
               {"Create Folder"}
             </Text>
           </TouchableOpacity>
-        </View>
+        </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>
   );
@@ -268,6 +268,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 24,
   },
 });

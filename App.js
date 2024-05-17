@@ -53,8 +53,6 @@ export default function App() {
 
       console.log('new folder update ' + data)
 
-      
-
     setFolders(data);
   };
 

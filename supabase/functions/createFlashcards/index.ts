@@ -19,9 +19,8 @@ Deno.serve(async (req) => {
     const jsonEnd = text.lastIndexOf('}') + 1;
     const jsonString = text.slice(jsonStart, jsonEnd);
   
-    const repaired = jsonrepair(jsonString)
-  
     try {
+      const repaired = jsonrepair(jsonString)
       const jsonObject = repaired;
       return jsonObject;
     } catch (error) {
@@ -51,7 +50,7 @@ Deno.serve(async (req) => {
   console.log(noteID)
   console.log(userID)
 
-  const prompt = "After reviewing the text given to you, create a set of flashcards based on the important information and key concepts. Determine the number of flashcards based on the amount and complexity of the information. Each flashcard should have 'back' (answer to the description and) 'front' (description of the answer information) properties. As an example the front could be: Finance raised by issuing shares in a business. And the back for that would be: Share Capital. Return the flashcards as a stringified JSON object with a single 'flashcards' property, which is an array of flashcard objects. Example flashcard: {'back': 'The process by which plants convert sunlight into energy', 'front': 'Photosynthesis'}. Ensure the flashcards cover the most important information and facilitate learning and retention. Dont present the question as for example What is the British Parliament made up of? Present it as The 3 Components of the British Parliament (as an example). You MUST Only return the JSON data in your response, nothing else." 
+  const prompt = "After reviewing the text given to you, create a set of flashcards based on the important information and key concepts. Determine the number of flashcards based on the amount and complexity of the information. Each flashcard should have 'back' (answer to the description and) 'front' (description of the answer information) properties. As an example the front could be: Finance raised by issuing shares in a business. And the back for that would be: Share Capital. Return the flashcards as a stringified JSON object with a single 'flashcards' property, which is an array of flashcard objects. Example flashcard: {'back': 'The process by which plants convert sunlight into energy', 'front': 'Photosynthesis'}. Ensure the flashcards cover the most important information and facilitate learning and retention. Dont present the question as for example What is the British Parliament made up of? Present it as The 3 Components of the British Parliament (as an example). You MUST Only return the JSON data in your response, nothing else. The text on the front and back should be short and consise." 
 
   const response = await anthropic.messages.create({
     max_tokens: 4096,

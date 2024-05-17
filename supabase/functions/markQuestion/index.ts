@@ -15,10 +15,9 @@ Deno.serve(async (req) => {
     const jsonStart = text.indexOf('{');
     const jsonEnd = text.lastIndexOf('}') + 1;
     const jsonString = text.slice(jsonStart, jsonEnd);
-  
-    const repaired = jsonrepair(jsonString)
-  
+    
     try {
+      const repaired = jsonrepair(jsonString)
       const jsonObject = JSON.parse(repaired);
       return jsonObject;
     } catch (error) {

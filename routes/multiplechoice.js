@@ -8,19 +8,19 @@ import userContext from "../components/userContext"
 import * as Progress from 'react-native-progress';
 import { Audio } from 'expo-av';
 import * as Haptics from "expo-haptics";
+import CircularProgress from 'react-native-circular-progress-indicator';
 
 export default function MultipleChoice({navigation}) {
     const { userID } = useContext(userContext);
     const [questions, setQuestions] = useState(null)
     const [markedAnswer, setMarkedAnswer] = useState(null)
     const [questionIndex, setQuestionIndex] = useState(0)
+    const [correctAnswers, setCorrectAnswers] = useState(0)
+    const [questionsFinished, setQuestionsFinished] = useState(false)
     const [sound, setSound] = useState()
     const route = useRoute();
     const id = route.params.id;
     const title = route.params.title;
-
-    console.log(userID)
-    console.log(id)
 
     function randomizeQuestions(data) {
         const shuffledQuestions = data.questions.map(question => {
@@ -44,11 +44,21 @@ export default function MultipleChoice({navigation}) {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         if (questionIndex === questions.length -1) {
             setQuestionIndex(1)
+            setQuestionsFinished(true)
+            console.log('question finished, index: ' + questionIndex)
         } else {
             setQuestionIndex(previous => previous + 1)
         }
 
         setMarkedAnswer(null)
+    }
+
+    function calculatePercentage(value, maxValue) {
+        if (maxValue === 0) {
+            throw new Error("Maximum value cannot be zero.");
+        }
+        let percentage = (value / maxValue) * 100;
+        return Math.ceil(percentage);
     }
 
     const markQuestion = (questionKey) => {
@@ -58,6 +68,7 @@ export default function MultipleChoice({navigation}) {
 
         if (questions[questionIndex].correct_answer === questionKey) {
             playSuccess()
+            setCorrectAnswers(previous => previous + 1)
             setMarkedAnswer({answer: questions[questionIndex].correct_answer, userCorrect: true})
             Haptics.notificationAsync(
                 Haptics.NotificationFeedbackType.Success
@@ -129,6 +140,24 @@ export default function MultipleChoice({navigation}) {
 
     if (!questions) {
         return <Text>PLEASE WAIT</Text>;
+    }
+
+    if (questionsFinished) {
+        return (
+            <View className='flex-1 items-center justify-center gap-y-2'>
+                <View className='flex-1 items-center justify-center'>
+                    <CircularProgress inActiveStrokeColor="#FFF" progressValueFontSize={35} value={calculatePercentage(correctAnswers, questions.length)} valueSuffix={'%'} />
+                </View>
+                <TouchableOpacity onPress={() => {
+                    playButton()
+                    navigation.goBack()
+                }} className={`bg-[#007d56] rounded-lg p-4 mx-2 absolute bottom-8 w-max`}>
+                    <Text className={"font-montmed text-white text-center text-2xl"}>
+                        {"Continue"}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        )
     }
 
     return (
