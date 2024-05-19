@@ -75,12 +75,12 @@ export default function Flashcard({navigation}) {
     return (
 
         <>
-        <View className='bg-[#fefaec] flex justify-center items-center'>
+        <View className='bg-[#f2f2f2] flex justify-center items-center'>
             <Text>Hello Again</Text>
             <Progress.Bar color="#007d56" progress={progress} width={200} />
 
         </View>
-        <View className='bg-[#fefaec] flex-1'>
+        <View className='bg-[#f2f2f2] flex-1'>
             <View className='flex-1 justify-center items-center'>
             <Swiper
                 cards={flashcards}
@@ -114,7 +114,7 @@ export default function Flashcard({navigation}) {
                 onSwipedAll={() => {console.log('onSwipedAll')}}
                 cardIndex={0}
                 onSwiping={handleSwiping}
-                backgroundColor={'#fefaec'}
+                backgroundColor={'#f2f2f2'}
                 onSwipedTop={() => console.log('correct')}
                 onSwipedBottom={() => console.log('incorrect')}
                 onSwipedAborted={() => setSwipeDirection(0)}
@@ -134,7 +134,7 @@ export default function Flashcard({navigation}) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#fefaec",
+      backgroundColor: "#f2f2f2",
     },
     card: {
       borderRadius: 4,

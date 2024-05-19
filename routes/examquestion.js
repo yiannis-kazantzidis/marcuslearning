@@ -6,6 +6,7 @@ import { useState, useContext, useEffect } from "react";
 import AnimatedLoader from 'react-native-animated-loader';
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import TouchableScale from 'react-native-touchable-scale';
 
 export default function ExamQuestion({navigation}) {
     const [answer, setAnswer] = useState('')
@@ -161,7 +162,7 @@ export default function ExamQuestion({navigation}) {
 
     if (markData !== null) {
         return (
-            <View className={"bg-[#fefaec] p-5 flex-1 justify-center"}>
+            <View className={"bg-[#f2f2f2] p-5 flex-1 justify-center"}>
                 <Text className='font-recmed text-2xl text-center text-green-800'>
                     {data.question}
                 </Text>
@@ -188,7 +189,7 @@ export default function ExamQuestion({navigation}) {
       <KeyboardAvoidingView
         behavior="padding"
         keyboardVerticalOffset={100}
-        className={"bg-[#fefaec] flex-1"}
+        className={"bg-[#f2f2f2] flex-1"}
       >
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
           <View className="p-5 flex-1">
@@ -203,15 +204,15 @@ export default function ExamQuestion({navigation}) {
                 onChangeText={(text) => setAnswer(text)}
                 className="w-full h-48 border-2 text-lg border-green-800 rounded-lg my-4 p-2 font-recmed"
               />
-              <TouchableOpacity
+              <TouchableScale
                 className="border-green-800 border-2 pt-1 px-5 py-2 w-full rounded-lg mb-4"
                 onPress={() => pickImage()}
               >
                 <Text className="text-center font-montmed text-xl">
                   Upload Answer
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
+              </TouchableScale>
+              <TouchableScale
                 disabled={loading}
                 className={`inline-flex flex-row items-center justify-center max-w-[256px] ${
                   loading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'
@@ -223,7 +224,7 @@ export default function ExamQuestion({navigation}) {
                 <Text className={"font-montmed text-white text-center text-2xl"}>
                   {!loading ? "Mark Answer" : 'Marking Answer'}
                 </Text>
-              </TouchableOpacity>
+              </TouchableScale>
             </View>
           </View>
         </TouchableWithoutFeedback>

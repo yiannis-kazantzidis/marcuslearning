@@ -9,6 +9,7 @@ import * as Progress from 'react-native-progress';
 import { Audio } from 'expo-av';
 import * as Haptics from "expo-haptics";
 import CircularProgress from 'react-native-circular-progress-indicator';
+import TouchableScale from 'react-native-touchable-scale';
 
 export default function MultipleChoice({navigation}) {
     const { userID } = useContext(userContext);
@@ -148,14 +149,14 @@ export default function MultipleChoice({navigation}) {
                 <View className='flex-1 items-center justify-center'>
                     <CircularProgress inActiveStrokeColor="#FFF" progressValueFontSize={35} value={calculatePercentage(correctAnswers, questions.length)} valueSuffix={'%'} />
                 </View>
-                <TouchableOpacity onPress={() => {
+                <TouchableScale onPress={() => {
                     playButton()
                     navigation.goBack()
                 }} className={`bg-[#007d56] rounded-lg p-4 mx-2 absolute bottom-8 w-max`}>
                     <Text className={"font-montmed text-white text-center text-2xl"}>
                         {"Continue"}
                     </Text>
-                </TouchableOpacity>
+                </TouchableScale>
             </View>
         )
     }
@@ -163,7 +164,7 @@ export default function MultipleChoice({navigation}) {
     return (
 
         <>
-            <View className='bg-[#fefaec] flex-1 justify-center items-center'>
+            <View className='bg-[#f2f2f2] flex-1 justify-center items-center'>
 
                 <Text className='font-recmed text-green-800 text-2xl text-center p-4'>{questions[questionIndex].question}</Text>
 
@@ -172,24 +173,24 @@ export default function MultipleChoice({navigation}) {
                         questions[questionIndex].answers.map((v, k) => {
 
                             return (
-                                <TouchableOpacity key={k} disabled={markedAnswer} onPress={() => {
+                                <TouchableScale key={k} disabled={markedAnswer} onPress={() => {
                                     markQuestion(v.uid)
-                                }} className={`h-14 shadow-xl shadow-black/5 min-w-[92%] rounded-xl border-2 border-b-4 ${!markedAnswer && 'border-[#989898]/25 bg-[#fefaec]' || (markedAnswer && questions[questionIndex].correct_answer === v.uid && 'border-[#007d56]/50 bg-green-500/10' || !markedAnswer.userCorrect && 'border-red-600/50 bg-red-600/10' || 'border-[#989898]/25 bg-[#fefaec]')} flex items-center justify-center px-4 mx-2`}>
+                                }} className={`h-14 shadow-xl shadow-black/5 min-w-[92%] rounded-xl border-2 border-b-4 ${!markedAnswer && 'border-[#989898]/25 bg-[#f2f2f2]' || (markedAnswer && questions[questionIndex].correct_answer === v.uid && 'border-[#007d56]/50 bg-green-500/10' || !markedAnswer.userCorrect && 'border-red-600/50 bg-red-600/10' || 'border-[#989898]/25 bg-[#f2f2f2]')} flex items-center justify-center px-4 mx-2`}>
                                     <Text className='text-black text-center font-montmed'>{v.answer}</Text>
-                                </TouchableOpacity>
+                                </TouchableScale>
                             )
 
                         })
                     }
 
-                    <TouchableOpacity disabled={!markedAnswer} onPress={() => {
+                    <TouchableScale disabled={!markedAnswer} onPress={() => {
                         playButton()
                         nextQuestion()
                         }}  className={`${markedAnswer ? 'bg-[#007d56]' : 'bg-[#007d56]/25'} rounded-lg p-4 mx-2`}>
                         <Text className={"font-montmed text-white text-center text-2xl"}>
                         {"Continue"}
                         </Text>
-                    </TouchableOpacity>
+                    </TouchableScale>
                 </View>
 
             
@@ -203,7 +204,7 @@ export default function MultipleChoice({navigation}) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#fefaec",
+      backgroundColor: "#f2f2f2",
     },
     card: {
       borderRadius: 4,

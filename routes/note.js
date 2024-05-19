@@ -6,6 +6,7 @@ import Markdown from 'react-native-markdown-display';
 import { supabase } from "../supabase/supabase";
 import ShakeEventExpo from "../components/shakeevent";
 import { CommonActions } from '@react-navigation/native';
+import TouchableScale from 'react-native-touchable-scale';
 
 export default function Note({navigation}) {
     const [showFullText, setShowFullText] = useState(false);
@@ -67,13 +68,13 @@ export default function Note({navigation}) {
     }, [])
 
     return (
-        <View className={"bg-[#fefaec] p-4 flex-1"}>
+        <View className={"bg-[#f2f2f2] p-4 flex-1"}>
             <Text className='text-green-900 font-recmed text-3xl'>{title}</Text>
             <TouchableOpacity onPress={() => deleteNote()}>
                 <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Note</Text>
             </TouchableOpacity>
             <View className="flex-row gap-x-4">
-                <TouchableOpacity className="w-12 h-12 shadow-xl shadow-black/25 bg-[#fefaec] rounded-xl border-2 border-green-800 p-4" onPress={() => {
+                <TouchableScale className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
                     openFlashcards()
                 }}>
                     <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
@@ -83,9 +84,9 @@ export default function Note({navigation}) {
                     <View className='absolute'> 
                         <Text className='font-montmed text-center text-lg'>{'F'}</Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableScale>
 
-                <TouchableOpacity className="w-12 h-12 shadow-xl shadow-black/25 bg-[#fefaec] rounded-xl border-2 border-green-800 p-4" onPress={() => {
+                <TouchableScale className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
                     openQuestions()
                 }}>
                     <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
@@ -95,9 +96,9 @@ export default function Note({navigation}) {
                     <View className='absolute'> 
                         <Text className='font-montmed text-center text-lg'>{'Q'}</Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableScale>
 
-                <TouchableOpacity className="w-12 h-12 shadow-xl shadow-black/25 bg-[#fefaec] rounded-xl border-2 border-green-800 p-4" onPress={() => {
+                <TouchableScale className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
                     navigation.navigate('Assistant', {id: noteID})
                 }}>
                     <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
@@ -107,7 +108,7 @@ export default function Note({navigation}) {
                     <View className='absolute'> 
                         <Text className='font-montmed text-center text-lg'>{'A'}</Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableScale>
             </View>
             <ScrollView className='my-4'>
                 <Markdown
@@ -127,11 +128,11 @@ export default function Note({navigation}) {
                         questions ? questions.questions.map((v, k) => {
 
                             return (
-                                <TouchableOpacity key={k} className="h-max shadow-md shadow-black/10 bg-[#fefaec] border-2 border-green-800/50 rounded-xl p-4" onPress={() => {
+                                <TouchableScale key={k} className="h-max shadow-md shadow-black/10 bg-[#f2f2f2] border-2 border-green-800/50 rounded-xl p-4" onPress={() => {
                                     navigation.navigate('ExamQuestion', {data: v, noteID, questionID, id: k})
                                 }}>                                
                                     <Text className='font-recmed text-md'>{v.question + ' (' + v.markScheme.totalMarks + ' marker)'}</Text>
-                                </TouchableOpacity>
+                                </TouchableScale>
 
                             )
                         }) : ''

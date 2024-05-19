@@ -27,6 +27,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import * as Haptics from "expo-haptics";
 import getFolderName from "../components/getFolderName.js";
+import TouchableScale from 'react-native-touchable-scale';
 
 export default function Files({ navigation }) {
   const { id, parent_id, name } = useContext(folderContext);
@@ -129,7 +130,7 @@ export default function Files({ navigation }) {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View className={"bg-[#fefaec] p-5 flex-1"}>
+      <View className={"bg-[#f2f2f2] p-5 flex-1"}>
         <TextInput className={"font-recmed text-3xl text-green-900"}>
           {name}
         </TextInput>
@@ -140,7 +141,7 @@ export default function Files({ navigation }) {
         {filteredFolders
           ? filteredFolders.map((v, k) => {
               return (
-                <TouchableOpacity
+                <TouchableScale
                   key={k}
                   onPress={() =>
                     navigation.navigate("Folder", {
@@ -166,14 +167,14 @@ export default function Files({ navigation }) {
                       {v.name}
                     </Text>
                   </View>
-                </TouchableOpacity>
+                </TouchableScale>
               );
             })
           : ""}
 
         {!filteredFolders[0] ? (
           <View className={"justify-center items-center flex-1"}>
-            <TouchableOpacity
+            <TouchableScale
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 handleOpenPress();
@@ -181,7 +182,7 @@ export default function Files({ navigation }) {
             >
               <View
                 className={
-                  "shadow-xl shadow-black/25 bg-[#fefaec] justify-center items-center p-8 rounded-xl border-2 border-green-800"
+                  "shadow-xl shadow-black/25 bg-[#f2f2f2] justify-center items-center p-8 rounded-xl border-2 border-green-800"
                 }
               >
                 <Image source={img} className={"w-24 h-24"} />
@@ -190,7 +191,7 @@ export default function Files({ navigation }) {
                 </Text>
                 <Text className={"font-montbold text-xl"}>Create One?</Text>
               </View>
-            </TouchableOpacity>
+            </TouchableScale>
           </View>
         ) : (
           ""
@@ -204,7 +205,7 @@ export default function Files({ navigation }) {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
               handleOpenPress();
             }}
-            className='bg-[#fefaec] shadow-xl shadow-black/50 justify-center items-center p-8'
+            className='bg-[#f2f2f2] shadow-xl shadow-black/50 justify-center items-center p-8'
           >
               <Text className={"font-montsemibold text-2xl text-green-800"}>
                 Create Folder
@@ -221,7 +222,7 @@ export default function Files({ navigation }) {
         index={-1}
         style={styles.sheetContainer}
         backdropComponent={renderBackdrop}
-        backgroundStyle={{ backgroundColor: "#faf3ea" }}
+        backgroundStyle={{ backgroundColor: "#f2f2f2" }}
       >
         <BottomSheetView style={{ flex: 0, minHeight: 100, padding: 5, justifyContent: 'center', alignItems: 'center' }}>
           <Text className={"text-2xl font-montsemibold"}>
@@ -234,7 +235,7 @@ export default function Files({ navigation }) {
             placeholder={"📚 Give your folder a name"}
           />
 
-          <TouchableOpacity
+          <TouchableScale
             className={`inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 w-full mb-6`}
             onPress={async () => {
               createSubject(folderName, id);
@@ -243,7 +244,7 @@ export default function Files({ navigation }) {
             <Text className={"font-montmed text-white text-center text-2xl"}>
               {"Create Folder"}
             </Text>
-          </TouchableOpacity>
+          </TouchableScale>
         </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>

@@ -26,6 +26,7 @@ import BottomSheet, {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import img from "../assets/folder-new/new-folder-dynamic-gradient.png";
 import userContext from "../components/userContext.js";
+import TouchableScale from 'react-native-touchable-scale';
 
 export default function Home({ navigation }) {
   const { userID, folders, setFolders } = useContext(userContext);
@@ -107,7 +108,7 @@ export default function Home({ navigation }) {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View className={"bg-[#fefaec] flex-1"}>
+      <View className={"bg-[#f2f2f2] flex-1"}>
         <View className={"w-full h-24 flex justify-center p-5"}>
           <Text
             className={"font-recmed text-green-800 text-5xl text-left"}
@@ -125,7 +126,7 @@ export default function Home({ navigation }) {
             {filteredFolders
               ? filteredFolders.map((v, k) => {
                   return (
-                    <TouchableOpacity
+                    <TouchableScale
                       key={k}
                       onPress={() =>
                         navigation.navigate("Folder", {
@@ -154,12 +155,12 @@ export default function Home({ navigation }) {
                           {v.name}
                         </Text>
                       </View>
-                    </TouchableOpacity>
+                    </TouchableScale>
                   );
                 })
               : ""}
 
-            <TouchableOpacity
+            <TouchableScale
               onPress={async () => {
                 handleOpenPress();
                 await Haptics.notificationAsync(
@@ -183,7 +184,7 @@ export default function Home({ navigation }) {
                   Add Folder
                 </Text>
               </View>
-            </TouchableOpacity>
+            </TouchableScale>
           </View>
         </View>
         <BottomSheet
@@ -205,7 +206,7 @@ export default function Home({ navigation }) {
               placeholder={"📚 Give your subject a name"}
             />
 
-            <TouchableOpacity
+            <TouchableScale
               disabled={loading}
               className={`${loading ? "opacity-50" : ""} inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 mb-6`}
               onPress={async () => {
@@ -219,7 +220,7 @@ export default function Home({ navigation }) {
               <Text className={"font-montmed text-white text-center text-2xl"}>
                 {"Create Folder"}
               </Text>
-            </TouchableOpacity>
+            </TouchableScale>
           </BottomSheetView>
         </BottomSheet>
       </View>

@@ -179,7 +179,7 @@ export default function Login({ navigation }) {
     }, []);
 
     return (
-        <View className={"bg-[#faf3ea] flex-1 justify-center items-center"}>
+        <View className={"bg-[#f2f2f2] flex-1 justify-center items-center"}>
             <Text className={"text-7xl text-green-900 font-recmed p-4"}>Marcus</Text>
 
             <View className={"flex flex-col gap-y-2 items-center"}>

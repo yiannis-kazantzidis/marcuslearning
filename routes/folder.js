@@ -35,7 +35,7 @@ export default function Folder({ navigation }) {
             textTransform: "none",
           },
           tabBarIndicatorStyle: { backgroundColor: "#007d56" },
-          tabBarStyle: { backgroundColor: "#fefaec" },
+          tabBarStyle: { backgroundColor: "#f2f2f2" },
         }}
       >
         <Tab.Screen name="Files" component={Files} />
