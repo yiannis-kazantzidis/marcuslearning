@@ -7,6 +7,7 @@ import { supabase } from "../supabase/supabase";
 import ShakeEventExpo from "../components/shakeevent";
 import { CommonActions } from '@react-navigation/native';
 import TouchableScale from 'react-native-touchable-scale';
+import FlipCard from 'react-native-flip-card'
 import {
     ScalingDot,
     SlidingBorder,
@@ -58,15 +59,26 @@ export default function Note({navigation}) {
     const route = useRoute();
     const [questions, setQuestions] = useState(null)
     const [questionID, setQuestionID] = useState(null)
+    const [flashcards, setFlashcards] = useState(null)
+    const [flashCardsData, setFlashCardsData] = useState(null)
     const { userID } = useContext(userContext);
     const {width} = useWindowDimensions();
     const scrollX = useRef(new Animated.Value(0)).current;
     const renderItem = useCallback(
       (item) => {
+        console.log(item)
         return (
-          <View style={[styles.itemContainer, {width: width - 60}]}>
-            <Text>{item.title}</Text>
-            <Animated.Text>{item.description}</Animated.Text>
+          <View style={[styles.itemContainer, { width }]}>
+            <FlipCard flipHorizontal={true} flipVertical={false}> 
+                <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
+                  <Text>{item.item.front}</Text>
+                </View>
+
+                <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
+                  <Text>{item.item.back}</Text>
+                </View>
+            </FlipCard>
+
           </View>
         );
       },
@@ -102,6 +114,16 @@ export default function Note({navigation}) {
     }
 
     useEffect(() => {
+      if (flashCardsData) {
+          const flashcardHolder = []
+          const flashcards = JSON.parse(flashCardsData[0].flashcards)
+
+          setFlashcards(flashcards.flashcards)
+      }
+    }, [flashCardsData])
+
+
+    useEffect(() => {
         const getQuestions = async () => {
             const { data, error } = await supabase
                 .from("two_marker_questions")
@@ -123,11 +145,32 @@ export default function Note({navigation}) {
             navigation.navigate('Assistant', {id: noteID})
         });
 
+        const getFlashcards = async () => {
+            const { data, error } = await supabase
+              .from("flashcards")
+              .select("*")
+              .eq("user_id", userID)
+              .eq('notes_id', noteID)
+
+
+              if (error) {
+                  console.log(error)
+              }
+  
+            setFlashCardsData(data)
+        };
+
+        getFlashcards()
         getQuestions()
     }, [])
 
+    if (!flashcards) {
+      return <Text>PLEASE WAIT</Text>;
+    }
+
     return (
-        <View className={"bg-[#f2f2f2] p-4 flex-1"}>
+        <View className={"bg-[#f2f2f2] flex-1"}>
+          <View className='p-4'>
             <Text className='text-green-900 font-recmed text-3xl'>{title}</Text>
             <TouchableOpacity onPress={() => deleteNote()}>
                 <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Note</Text>
@@ -169,71 +212,66 @@ export default function Note({navigation}) {
                     </View>
                 </TouchableScale>
             </View>
+          </View>
+            
             <ScrollView className='my-4'>
-                    <View style={[styles.container]}>
-      <FlatList
-        data={INTRO_DATA}
-        keyExtractor={keyExtractor}
-        showsHorizontalScrollIndicator={false}
-        onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {x: scrollX}}}],
-          {
-            useNativeDriver: false,
-          },
-        )}
-        style={styles.flatList}
-        pagingEnabled
-        horizontal
-        decelerationRate={'normal'}
-        scrollEventThrottle={16}
-        renderItem={renderItem}
-      />
-      <View style={styles.text}>
-        <View style={styles.dotContainer}>
-          <Text>Expanding Dot</Text>
-          <ExpandingDot
-            data={INTRO_DATA}
-            expandingDotWidth={30}
-            scrollX={scrollX}
-            inActiveDotColor={'#347af0'}
-            activeDotColor={'#347af0'}
-            inActiveDotOpacity={0.5}
-            dotStyle={styles.dotStyles}
-            containerStyle={styles.constainerStyles}
-          />
-        </View>
+              <Markdown
+                  maxTopLevelChildren={showFullText ? undefined : 6} // Limit the number of top-level children
+                  style={markdownStyles}>
+                  {content}
+              </Markdown>
 
-      </View>
-    </View>
-                <Markdown
-                    maxTopLevelChildren={showFullText ? undefined : 6} // Limit the number of top-level children
-                    style={markdownStyles}>
-                    {content}
-                </Markdown>
+              <TouchableOpacity onPress={toggleShowFullText}>
+                  <Text className='font-recmed underline text-green-800 text-center'>{showFullText ? 'Show Less' : 'Show More'}</Text>
+              </TouchableOpacity>
 
-                <TouchableOpacity onPress={toggleShowFullText}>
-                    <Text className='font-recmed underline text-green-800 text-center'>{showFullText ? 'Show Less' : 'Show More'}</Text>
-                </TouchableOpacity>
+              <View style={styles.container}>
+                <FlatList
+                    data={flashcards}
+                    keyExtractor={keyExtractor}
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={Animated.event(
+                        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                        { useNativeDriver: false }
+                    )}
+                    style={styles.flatList}
+                    pagingEnabled
+                    horizontal
+                    decelerationRate="fast"
+                    scrollEventThrottle={16}
+                    renderItem={renderItem}
+                />
+                    <View style={styles.dotContainer}>
+                        <ExpandingDot
+                            data={flashcards}
+                            expandingDotWidth={30}
+                            scrollX={scrollX}
+                            inActiveDotColor={'#22a20e'}
+                            activeDotColor={'#1e8311'}
+                            inActiveDotOpacity={0.5}
+                            dotStyle={styles.dotStyles}
+                            containerStyle={styles.containerStyles}
+                        />
+                    </View>
+              </View>
 
-                <Text className='font-recmed text-3xl mt-5 text-green-800'>Exam Questions</Text>
-                <View className='flex-1 flex-col gap-y-4 py-5'>
-
-                    {
-                        questions ? questions.questions.map((v, k) => {
-
-                            return (
-                                <TouchableScale key={k} className="h-max shadow-md shadow-black/10 bg-[#f2f2f2] border-2 border-green-800/50 rounded-xl p-4" onPress={() => {
-                                    navigation.navigate('ExamQuestion', {data: v, noteID, questionID, id: k})
-                                }}>                                
-                                    <Text className='font-recmed text-md'>{v.question + ' (' + v.markScheme.totalMarks + ' marker)'}</Text>
-                                </TouchableScale>
-
-                            )
-                        }) : ''
-                    }
-
-                </View>
+              <Text className='font-recmed text-3xl mt-5 text-green-800'>Exam Questions</Text>
+              <View className='flex-1 flex-col gap-y-4 py-5'>
+                  {
+                    questions ? questions.questions.map((v, k) => {
+                      return (
+                          <TouchableScale key={k} className="h-max shadow-md shadow-black/10 bg-[#f2f2f2] border-2 border-green-800/50 rounded-xl p-4" onPress={() => {
+                              navigation.navigate('ExamQuestion', {data: v, noteID, questionID, id: k})
+                          }}>                                
+                              <Text className='font-recmed text-md'>{v.question + ' (' + v.markScheme.totalMarks + ' marker)'}</Text>
+                          </TouchableScale>
+                      )
+                    }) : ''
+                  }
+              </View>
             </ScrollView>
+
+
         </View>
     )
 }
@@ -259,39 +297,45 @@ const markdownStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#e7e7e7',
-    },
-    text: {
-      flex: 1,
-      justifyContent: 'space-evenly',
-      color: 'black'
-    },
-    flatList: {
-      flex: 1,
-    },
-    dotContainer: {
-      justifyContent: 'center',
-      alignSelf: 'center',
-    },
-    dotStyles: {
-      width: 10,
-      height: 10,
-      borderRadius: 5,
-      marginHorizontal: 3,
-    },
-    constainerStyles: {
-      top: 30,
-    },
-    itemContainer: {
-      backgroundColor: '#fff',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 40,
-      marginTop: 40,
-      marginHorizontal: 40,
-      borderRadius: 20,
-    },
+  container: {
+    flex: 1,
+    // backgroundColor: '#e7e7e7',
+  },
+  text: {
+    flex: 1,
+    justifyContent: 'space-evenly',
+    color: 'black',
+  },
+  flatList: {
+    flex: 1,
+  },
+  dotContainer: {
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  dotStyles: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    marginHorizontal: 3,
+  },
+  containerStyles: {
+    top: 30,
+  },
+  itemContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  innerContainer: {
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+    marginTop: 40,
+    height: 140,
+    marginHorizontal: 30,
+    borderRadius: 20,
+    width: 300, // Set a fixed width here
+  },
 });
   
