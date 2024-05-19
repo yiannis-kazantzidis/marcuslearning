@@ -1,12 +1,57 @@
-import { Text, View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, StyleSheet, useWindowDimensions, FlatList, Animated } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import userContext from "../components/userContext";
 import Markdown from 'react-native-markdown-display';
 import { supabase } from "../supabase/supabase";
 import ShakeEventExpo from "../components/shakeevent";
 import { CommonActions } from '@react-navigation/native';
 import TouchableScale from 'react-native-touchable-scale';
+import {
+    ScalingDot,
+    SlidingBorder,
+    ExpandingDot,
+    SlidingDot,
+} from 'react-native-animated-pagination-dots';
+
+const INTRO_DATA = [
+    {
+      key: '1',
+      title: 'App showcase ✨',
+      description:
+        'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    },
+    {
+      key: '2',
+      title: 'Introduction screen 🎉',
+      description:
+        "Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. ",
+    },
+    {
+      key: '3',
+      title: 'And can be anything 🎈',
+      description:
+        'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
+    },
+    {
+      key: '4',
+      title: 'And can be anything 🎈',
+      description:
+        'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
+    },
+    {
+      key: '5',
+      title: 'And can be anything 🎈',
+      description:
+        'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
+    },
+    {
+      key: '6',
+      title: 'And can be anything 🎈',
+      description:
+        'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
+    },
+  ];
 
 export default function Note({navigation}) {
     const [showFullText, setShowFullText] = useState(false);
@@ -14,6 +59,20 @@ export default function Note({navigation}) {
     const [questions, setQuestions] = useState(null)
     const [questionID, setQuestionID] = useState(null)
     const { userID } = useContext(userContext);
+    const {width} = useWindowDimensions();
+    const scrollX = useRef(new Animated.Value(0)).current;
+    const renderItem = useCallback(
+      (item) => {
+        return (
+          <View style={[styles.itemContainer, {width: width - 60}]}>
+            <Text>{item.title}</Text>
+            <Animated.Text>{item.description}</Animated.Text>
+          </View>
+        );
+      },
+      [width],
+    );
+    const keyExtractor = useCallback((item) => item.key, []);
     const noteID = route.params.id;
     const title = route.params.title;
     const content = route.params.content
@@ -111,6 +170,41 @@ export default function Note({navigation}) {
                 </TouchableScale>
             </View>
             <ScrollView className='my-4'>
+                    <View style={[styles.container]}>
+      <FlatList
+        data={INTRO_DATA}
+        keyExtractor={keyExtractor}
+        showsHorizontalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{nativeEvent: {contentOffset: {x: scrollX}}}],
+          {
+            useNativeDriver: false,
+          },
+        )}
+        style={styles.flatList}
+        pagingEnabled
+        horizontal
+        decelerationRate={'normal'}
+        scrollEventThrottle={16}
+        renderItem={renderItem}
+      />
+      <View style={styles.text}>
+        <View style={styles.dotContainer}>
+          <Text>Expanding Dot</Text>
+          <ExpandingDot
+            data={INTRO_DATA}
+            expandingDotWidth={30}
+            scrollX={scrollX}
+            inActiveDotColor={'#347af0'}
+            activeDotColor={'#347af0'}
+            inActiveDotOpacity={0.5}
+            dotStyle={styles.dotStyles}
+            containerStyle={styles.constainerStyles}
+          />
+        </View>
+
+      </View>
+    </View>
                 <Markdown
                     maxTopLevelChildren={showFullText ? undefined : 6} // Limit the number of top-level children
                     style={markdownStyles}>
@@ -162,4 +256,42 @@ const markdownStyles = StyleSheet.create({
     text: {
       fontFamily: 'Recoleta-Regular',
     },
-  });
+});
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#e7e7e7',
+    },
+    text: {
+      flex: 1,
+      justifyContent: 'space-evenly',
+      color: 'black'
+    },
+    flatList: {
+      flex: 1,
+    },
+    dotContainer: {
+      justifyContent: 'center',
+      alignSelf: 'center',
+    },
+    dotStyles: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+      marginHorizontal: 3,
+    },
+    constainerStyles: {
+      top: 30,
+    },
+    itemContainer: {
+      backgroundColor: '#fff',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 40,
+      marginTop: 40,
+      marginHorizontal: 40,
+      borderRadius: 20,
+    },
+});
+  
