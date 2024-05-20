@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   TextInput,
+  ScrollView
 } from "react-native";
 import folderContext from "../components/folderContext";
 import {
@@ -88,16 +89,12 @@ export default function Files({ navigation }) {
       },
     );
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data);
-    } else {
+    if (!response.ok) {
       throw new Error("Error");
     }
 
     setLoading(false);
     handleClosePress();
-    getSubjects();
   };
 
   const deleteFolder = async () => {
@@ -117,60 +114,61 @@ export default function Files({ navigation }) {
     }
   };
 
-  const getSubjects = async () => {
-    const { data, error } = await supabase.from("folders").select("*");
-
-    setFolders(data);
-    console.log(error);
-    console.log(data);
-  };
-
   const handleClosePress = () => bottomSheetRef.current?.close();
   const handleOpenPress = () => bottomSheetRef.current?.expand();
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View className={"bg-[#f2f2f2] p-5 flex-1"}>
-        <TextInput className={"font-recmed text-3xl text-green-900"}>
-          {name}
-        </TextInput>
-        <TouchableOpacity onPress={() => deleteFolder()}>
-              <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Folder</Text>
-        </TouchableOpacity>
+      <View className={"bg-[#f2f2f2] flex-1"}>
+        <View className='px-4 mt-4'>
+          <TextInput className={"font-recmed text-3xl text-green-900"}>
+            {name}
+          </TextInput>
+          <TouchableOpacity onPress={() => deleteFolder()}>
+                <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Folder</Text>
+          </TouchableOpacity>
+        </View>
 
-        {filteredFolders
-          ? filteredFolders.map((v, k) => {
-              return (
-                <MarcusTouchable
-                  key={k}
-                  onPress={() =>
-                    navigation.navigate("Folder", {
-                      id: v.id,
-                      name: v.name,
-                      parent_id: id,
-                    })
-                  }
-                >
-                  <View
-                    className={
-                      "border-2 border-black/5 h-14 rounded-xl flex flex-row items-center p-1 bg-white/25"
-                    }
-                  >
-                    <View
-                      className={
-                        "w-12 h-full bg-green-800/10 flex justify-center items-center p-2 rounded-xl"
+        {filteredFolders[0] ? (
+          <ScrollView className='px-4 my-4'>
+            <View className="flex-col gap-y-2">
+              {filteredFolders.map((v, k) => {
+                  return (
+                    <MarcusTouchable
+                      key={k}
+                      onPress={() =>
+                        navigation.navigate("Folder", {
+                          id: v.id,
+                          name: v.name,
+                          parent_id: id,
+                        })
                       }
                     >
-                      <Image source={localImage} className={"w-full h-full"} />
-                    </View>
-                    <Text className={"font-montsemibold text-xl px-2"}>
-                      {v.name}
-                    </Text>
-                  </View>
-                </MarcusTouchable>
-              );
-            })
-          : ""}
+                      <View
+                        className={
+                          "border-2 border-black/5 h-14 rounded-xl flex flex-row items-center p-1 bg-white/25"
+                        }
+                      >
+                        <View
+                          className={
+                            "w-12 h-full bg-green-800/10 flex justify-center items-center p-2 rounded-xl"
+                          }
+                        >
+                          <Image source={localImage} className={"w-full h-full"} />
+                        </View>
+                        <Text className={"font-montmed text-lg pl-2"}>
+                          {v.name}
+                        </Text>
+                      </View>
+                    </MarcusTouchable>
+                  );
+                })
+              }
+            </View>
+        </ScrollView>
+        ) : ''}
+
+        
 
         {!filteredFolders[0] ? (
           <View className={"justify-center items-center flex-1"}>

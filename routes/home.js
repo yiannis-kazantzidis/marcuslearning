@@ -83,7 +83,6 @@ export default function Home({ navigation }) {
 
   useEffect(() => {
     console.log('folders updated')
-    console.log(folders)
 
   }, [folders])
 

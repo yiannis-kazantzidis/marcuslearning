@@ -32,7 +32,6 @@ export default function App() {
     if (!userID) {
       if (session?.user) {
         setUserID(session.user.id)
-        console.log('here is the ID: ' + session.user.id)
         return session.user.id
       } 
     }
@@ -49,10 +48,6 @@ export default function App() {
       .select("*")
       .eq("user_id", userID);
 
-      console.log('console log ' + userID)
-
-      console.log('new folder update ' + data)
-
     setFolders(data);
   };
 
@@ -61,9 +56,6 @@ export default function App() {
       .from("notes")
       .select("*")
       .eq("user_id", userID);
-
-    console.log(userID)
-    console.log('new notes data' + data)
 
     setNotes(data);
   };
@@ -136,18 +128,8 @@ export default function App() {
         .from("folders")
         .select("*")
         .eq("user_id", userId);
-
-
-      
   
-      console.log('console log ' + userId);
-      console.log('new folder update ' + data);
-
-      console.log('HERE IS THE DATA ----' + data)
-
-      const filteredArray = data.filter(item => item.user_id === userId);
-  
-      setFolders(filteredArray);
+      setFolders(data);
     };
   
     let channel = supabase

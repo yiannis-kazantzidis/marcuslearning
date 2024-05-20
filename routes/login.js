@@ -190,7 +190,7 @@ export default function Login({ navigation }) {
                     buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
                     cornerRadius={5}
                     style={styles.button}
-                    onPress={handleAppleSignIn}
+                    onPress={() => handleAppleSignIn()}
                 />
             </View>
         </View>
