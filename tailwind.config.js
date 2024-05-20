@@ -7,6 +7,7 @@ module.exports = {
               'recmed': ['Recoleta-Medium', 'sans-serif'],
               'recbold': ['Recoleta-SemiBold', 'serif'],
               'recregular': ['Recoleta-Regular', 'serif'],
+              'montreg': ['Montserrat-Regular', 'serif'],
               'montmed': ['Montserrat-Medium', 'serif'],
               'montsemibold': ['Montserrat-SemiBold', 'serif'],
               'montbold': ['Montserrat-Bold', 'serif']

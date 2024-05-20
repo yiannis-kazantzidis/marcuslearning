@@ -27,7 +27,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import * as Haptics from "expo-haptics";
 import getFolderName from "../components/getFolderName.js";
-import TouchableScale from 'react-native-touchable-scale';
+import MarcusTouchable from "../components/MarcusTouchable";
 
 export default function Files({ navigation }) {
   const { id, parent_id, name } = useContext(folderContext);
@@ -141,7 +141,7 @@ export default function Files({ navigation }) {
         {filteredFolders
           ? filteredFolders.map((v, k) => {
               return (
-                <TouchableScale
+                <MarcusTouchable
                   key={k}
                   onPress={() =>
                     navigation.navigate("Folder", {
@@ -167,14 +167,14 @@ export default function Files({ navigation }) {
                       {v.name}
                     </Text>
                   </View>
-                </TouchableScale>
+                </MarcusTouchable>
               );
             })
           : ""}
 
         {!filteredFolders[0] ? (
           <View className={"justify-center items-center flex-1"}>
-            <TouchableScale
+            <MarcusTouchable
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 handleOpenPress();
@@ -191,7 +191,7 @@ export default function Files({ navigation }) {
                 </Text>
                 <Text className={"font-montbold text-xl"}>Create One?</Text>
               </View>
-            </TouchableScale>
+            </MarcusTouchable>
           </View>
         ) : (
           ""
@@ -235,7 +235,7 @@ export default function Files({ navigation }) {
             placeholder={"📚 Give your folder a name"}
           />
 
-          <TouchableScale
+          <MarcusTouchable
             className={`inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 w-full mb-6`}
             onPress={async () => {
               createSubject(folderName, id);
@@ -244,7 +244,7 @@ export default function Files({ navigation }) {
             <Text className={"font-montmed text-white text-center text-2xl"}>
               {"Create Folder"}
             </Text>
-          </TouchableScale>
+          </MarcusTouchable>
         </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>

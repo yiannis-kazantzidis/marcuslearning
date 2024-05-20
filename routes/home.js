@@ -26,7 +26,7 @@ import BottomSheet, {
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import img from "../assets/folder-new/new-folder-dynamic-gradient.png";
 import userContext from "../components/userContext.js";
-import TouchableScale from 'react-native-touchable-scale';
+import MarcusTouchable from "../components/MarcusTouchable.js";
 
 export default function Home({ navigation }) {
   const { userID, folders, setFolders } = useContext(userContext);
@@ -126,7 +126,7 @@ export default function Home({ navigation }) {
             {filteredFolders
               ? filteredFolders.map((v, k) => {
                   return (
-                    <TouchableScale
+                    <MarcusTouchable
                       key={k}
                       onPress={() =>
                         navigation.navigate("Folder", {
@@ -155,12 +155,12 @@ export default function Home({ navigation }) {
                           {v.name}
                         </Text>
                       </View>
-                    </TouchableScale>
+                    </MarcusTouchable>
                   );
                 })
               : ""}
 
-            <TouchableScale
+            <MarcusTouchable
               onPress={async () => {
                 handleOpenPress();
                 await Haptics.notificationAsync(
@@ -184,7 +184,7 @@ export default function Home({ navigation }) {
                   Add Folder
                 </Text>
               </View>
-            </TouchableScale>
+            </MarcusTouchable>
           </View>
         </View>
         <BottomSheet
@@ -206,7 +206,7 @@ export default function Home({ navigation }) {
               placeholder={"📚 Give your subject a name"}
             />
 
-            <TouchableScale
+            <MarcusTouchable
               disabled={loading}
               className={`${loading ? "opacity-50" : ""} inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 mb-6`}
               onPress={async () => {
@@ -220,7 +220,7 @@ export default function Home({ navigation }) {
               <Text className={"font-montmed text-white text-center text-2xl"}>
                 {"Create Folder"}
               </Text>
-            </TouchableScale>
+            </MarcusTouchable>
           </BottomSheetView>
         </BottomSheet>
       </View>

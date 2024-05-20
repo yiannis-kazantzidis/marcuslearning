@@ -6,7 +6,7 @@ import Markdown from 'react-native-markdown-display';
 import { supabase } from "../supabase/supabase";
 import ShakeEventExpo from "../components/shakeevent";
 import { CommonActions } from '@react-navigation/native';
-import TouchableScale from 'react-native-touchable-scale';
+import MarcusTouchable from "../components/MarcusTouchable";
 import FlipCard from 'react-native-flip-card'
 import {
     ScalingDot,
@@ -71,11 +71,11 @@ export default function Note({navigation}) {
           <View style={[styles.itemContainer, { width }]}>
             <FlipCard flipHorizontal={true} flipVertical={false}> 
                 <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
-                  <Text>{item.item.front}</Text>
+                  <Text className='font-montmed'>{item.item.front}</Text>
                 </View>
 
                 <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
-                  <Text>{item.item.back}</Text>
+                  <Text className='font-montregular'>{item.item.back}</Text>
                 </View>
             </FlipCard>
 
@@ -176,8 +176,8 @@ export default function Note({navigation}) {
                 <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Note</Text>
             </TouchableOpacity>
             <View className="flex-row gap-x-4">
-                <TouchableScale className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
-                    openFlashcards()
+                <MarcusTouchable className="w-12 h-12 shadow-xl shadow-black/25 bg-red-600 rounded-xl p-4" onPress={() => {
+                    deleteNote()
                 }}>
                     <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
                         
@@ -186,9 +186,9 @@ export default function Note({navigation}) {
                     <View className='absolute'> 
                         <Text className='font-montmed text-center text-lg'>{'F'}</Text>
                     </View>
-                </TouchableScale>
+                </MarcusTouchable>
 
-                <TouchableScale className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
+                <MarcusTouchable className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
                     openQuestions()
                 }}>
                     <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
@@ -198,9 +198,9 @@ export default function Note({navigation}) {
                     <View className='absolute'> 
                         <Text className='font-montmed text-center text-lg'>{'Q'}</Text>
                     </View>
-                </TouchableScale>
+                </MarcusTouchable>
 
-                <TouchableScale className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
+                <MarcusTouchable className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
                     navigation.navigate('Assistant', {id: noteID})
                 }}>
                     <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
@@ -210,16 +210,18 @@ export default function Note({navigation}) {
                     <View className='absolute'> 
                         <Text className='font-montmed text-center text-lg'>{'A'}</Text>
                     </View>
-                </TouchableScale>
+                </MarcusTouchable>
             </View>
           </View>
             
             <ScrollView className='my-4'>
-              <Markdown
-                  maxTopLevelChildren={showFullText ? undefined : 6} // Limit the number of top-level children
-                  style={markdownStyles}>
-                  {content}
-              </Markdown>
+              <View className='p-4'>
+                <Markdown
+                    maxTopLevelChildren={showFullText ? undefined : 6} // Limit the number of top-level children
+                    style={markdownStyles}>
+                    {content}
+                </Markdown>
+              </View>
 
               <TouchableOpacity onPress={toggleShowFullText}>
                   <Text className='font-recmed underline text-green-800 text-center'>{showFullText ? 'Show Less' : 'Show More'}</Text>
@@ -255,20 +257,20 @@ export default function Note({navigation}) {
                     </View>
               </View>
 
-              <Text className='font-recmed text-3xl mt-5 text-green-800'>Exam Questions</Text>
-              <View className='flex-1 flex-col gap-y-4 py-5'>
-                  {
-                    questions ? questions.questions.map((v, k) => {
-                      return (
-                          <TouchableScale key={k} className="h-max shadow-md shadow-black/10 bg-[#f2f2f2] border-2 border-green-800/50 rounded-xl p-4" onPress={() => {
-                              navigation.navigate('ExamQuestion', {data: v, noteID, questionID, id: k})
-                          }}>                                
-                              <Text className='font-recmed text-md'>{v.question + ' (' + v.markScheme.totalMarks + ' marker)'}</Text>
-                          </TouchableScale>
-                      )
-                    }) : ''
-                  }
-              </View>
+                <Text className='font-recmed text-3xl mt-5 text-green-800 pl-4'>Exam Questions</Text>
+                <View className='flex-1 flex-col gap-y-4 py-5 p-4'>
+                    {
+                      questions ? questions.questions.map((v, k) => {
+                        return (
+                            <MarcusTouchable key={k} className="h-max shadow-md shadow-black/10 bg-[#f2f2f2] border-2 border-green-800/50 rounded-xl p-4" onPress={() => {
+                                navigation.navigate('ExamQuestion', {data: v, noteID, questionID, id: k})
+                            }}>                                
+                                <Text className='font-montreg text-md'>{v.question + ' (' + v.markScheme.totalMarks + ' marker)'}</Text>
+                            </MarcusTouchable>
+                        )
+                      }) : ''
+                    }
+                </View>
             </ScrollView>
 
 
@@ -279,20 +281,28 @@ export default function Note({navigation}) {
 const markdownStyles = StyleSheet.create({
     heading1: {
       fontSize: 24,
-      fontFamily: 'Recoleta-SemiBold',
+      fontFamily: 'Montserrat-Bold',
+    },
+    list_item: {
+      paddingVertical: 5,
+    },
+    heading3: {
+      paddingVertical: 10,
     },
     heading2: {
       fontSize: 20,
-      fontFamily: 'Recoleta-Medium',
+      paddingVertical: 10,
+      fontFamily: 'Montserrat-SemiBold',
     },
     strong: {
-      fontFamily: 'Recoleta-Regular',
+      fontWeight: '900',
+      fontFamily: 'Montserrat-SemiBold',
     },
     em: {
-      fontFamily: 'Recoleta-Regular',
+      fontFamily: 'Montserrat-Regular',
     },
     text: {
-      fontFamily: 'Recoleta-Regular',
+      fontFamily: 'Montserrat-Regular',
     },
 });
 
@@ -312,6 +322,8 @@ const styles = StyleSheet.create({
   dotContainer: {
     justifyContent: 'center',
     alignSelf: 'center',
+    height: 20,
+    marginBottom: 20,
   },
   dotStyles: {
     width: 10,
@@ -332,10 +344,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 40,
     marginTop: 40,
-    height: 140,
+    marginBottom: 5,
+    height: 160,
     marginHorizontal: 30,
-    borderRadius: 20,
-    width: 300, // Set a fixed width here
+    borderRadius: 10,
   },
 });
   

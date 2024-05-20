@@ -74,6 +74,7 @@ export default function App() {
         "Recoleta-Medium": require("./assets/fonts/Recoleta-Medium.ttf"),
         "Recoleta-SemiBold": require("./assets/fonts/Recoleta-SemiBold.ttf"),
         "Recoleta-Regular": require("./assets/fonts/Recoleta-Regular.ttf"),
+        "Montserrat-Regular": require("./assets/fonts/marlin-sq-regular.ttf"),
         "Montserrat-Medium": require("./assets/fonts/marlin-sq-medium.ttf"),
         "Montserrat-SemiBold": require("./assets/fonts/marlin-sq-bold.ttf"),
         "Montserrat-Bold": require("./assets/fonts/marlin-sq-extrabold.ttf"),
@@ -135,20 +136,28 @@ export default function App() {
         .from("folders")
         .select("*")
         .eq("user_id", userId);
+
+
+      
   
       console.log('console log ' + userId);
       console.log('new folder update ' + data);
+
+      console.log('HERE IS THE DATA ----' + data)
+
+      const filteredArray = data.filter(item => item.user_id === userId);
   
-      setFolders(data);
+      setFolders(filteredArray);
     };
   
     let channel = supabase
       .channel("folders")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "folders", filter: `user_id=eq.${userID}` },
+        { event: "*", schema: "public", table: "folders", filter: `user_id=eq.${userID}`},
         (payload) => {
           initfolders(userID);
+          console.log('HERE IS THE USER ID:' + userID)
           console.log("Received update:", payload);
         },
       )

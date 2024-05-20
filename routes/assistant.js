@@ -9,7 +9,7 @@ const Buffer = require('buffer/').Buffer  // note: the trailing slash is importa
 import LottieView from 'lottie-react-native';
 import { supabase } from '../supabase/supabase';
 import userContext from '../components/userContext';
-import TouchableScale from 'react-native-touchable-scale';
+import MarcusTouchable from '../components/MarcusTouchable';
 
 export default function Assistant({navigation}) {
   const route = useRoute();
@@ -237,7 +237,7 @@ export default function Assistant({navigation}) {
 
       </View>
 
-      <TouchableScale
+      <MarcusTouchable
             disabled={isLoading}
             className={`inline-flex flex-row my-12 items-center justify-center max-w-[256px] ${isLoading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'} rounded-lg pt-1 px-5 py-2 w-full`}
             onPress={isRecording ? stopRecording : startRecording}
@@ -245,7 +245,7 @@ export default function Assistant({navigation}) {
             <Text className={"font-montmed text-white text-center text-2xl"}>
               {isRecording ? "Stop Talking" : 'Start Talking'}
             </Text>
-      </TouchableScale>
+      </MarcusTouchable>
 
     </View>
   );

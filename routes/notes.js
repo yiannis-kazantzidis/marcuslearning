@@ -30,7 +30,7 @@ import * as FileSystem from "expo-file-system";
 import AnimatedLoader from 'react-native-animated-loader';
 import LottieView from 'lottie-react-native';
 import * as Clipboard from 'expo-clipboard';
-import TouchableScale from 'react-native-touchable-scale';
+import MarcusTouchable from "../components/MarcusTouchable";
 // Requires apple dev account so fucking gay
 // import ContextMenu from "react-native-context-menu-view";
 
@@ -266,7 +266,7 @@ export default function Notes({ navigation }) {
             <View className="flex-col gap-y-4">
               {filteredNotes.map((v, k) => {
                   return (
-                    <TouchableScale onPress={() =>
+                    <MarcusTouchable onPress={() =>
                       navigation.navigate("Note", {
                         id: v.id,
                         title: v.title,
@@ -282,7 +282,7 @@ export default function Notes({ navigation }) {
                     >
                     </View>
                         <Text className='font-montmed text-md pl-2'>{v.title}</Text>
-                    </TouchableScale>
+                    </MarcusTouchable>
                   );
                 })
               }
@@ -293,7 +293,7 @@ export default function Notes({ navigation }) {
 
         {!filteredNotes[0]? (
           <View className={"justify-center items-center flex-1"}>
-            <TouchableScale
+            <MarcusTouchable
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 handleOpenPress();
@@ -310,7 +310,7 @@ export default function Notes({ navigation }) {
                 </Text>
                 <Text className={"font-montbold text-xl"}>Create One?</Text>
               </View>
-            </TouchableScale>
+            </MarcusTouchable>
           </View>
         ) : (
           ""
@@ -381,7 +381,7 @@ export default function Notes({ navigation }) {
                 <View style={styles.yourOwnStyles} />
               </ContextMenu> */}
 
-            <TouchableScale onPress={() => pickImage()}
+            <MarcusTouchable onPress={() => pickImage()}
               className={
               `bg-black/5 inline-flex ${!image ? 'h-36' : 'h-max'}  rounded-lg border-2 border-green-800`
               }
@@ -402,14 +402,14 @@ export default function Notes({ navigation }) {
                 </View>
               )}
 
-            </TouchableScale>
+            </MarcusTouchable>
 
               <Text className='font-recregular mt-2 text-md text-green-800 text-center'>You can upload up to 3 images at once</Text>
             </View>
 
           )|| (
             <View className='flex flex-row w-max'>
-              <TouchableScale onPress={() => {
+              <MarcusTouchable onPress={() => {
                 setUploadChoice(1)
               }}
                 className={
@@ -420,9 +420,9 @@ export default function Notes({ navigation }) {
     
                 <Text className='font-montbold absolute bottom-1 text-center mb-2'>Upload Image</Text>
     
-              </TouchableScale>
+              </MarcusTouchable>
               
-              <TouchableScale onPress={() => {
+              <MarcusTouchable onPress={() => {
                 setUploadChoice(2)
               }}
                 className={
@@ -435,13 +435,13 @@ export default function Notes({ navigation }) {
     
                 <Text className='font-montbold absolute bottom-1 text-center mb-2'>Youtube Video</Text>
     
-              </TouchableScale>
+              </MarcusTouchable>
             </View>
           )}
 
 
 
-          <TouchableScale
+          <MarcusTouchable
             disabled={loading}
             className={`inline-flex h-14 flex-row items-center justify-center w-full ${loading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'} rounded-lg pt-1 px-5 py-2 max-w-[300] mb-6`}
             onPress={() => {
@@ -455,7 +455,7 @@ export default function Notes({ navigation }) {
             <Text className={"font-montmed text-white text-center text-2xl"}>
               {(uploadChoice == 2 && !youtubeURL) && 'Paste Link' || !loading && "Create Notes" || 'Creating Notes'}
             </Text>
-          </TouchableScale>
+          </MarcusTouchable>
         </BottomSheetView>
       </BottomSheet>
 

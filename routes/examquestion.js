@@ -6,7 +6,7 @@ import { useState, useContext, useEffect } from "react";
 import AnimatedLoader from 'react-native-animated-loader';
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-import TouchableScale from 'react-native-touchable-scale';
+import MarcusTouchable from "../components/MarcusTouchable";
 
 export default function ExamQuestion({navigation}) {
     const [answer, setAnswer] = useState('')
@@ -204,15 +204,15 @@ export default function ExamQuestion({navigation}) {
                 onChangeText={(text) => setAnswer(text)}
                 className="w-full h-48 border-2 text-lg border-green-800 rounded-lg my-4 p-2 font-recmed"
               />
-              <TouchableScale
+              <MarcusTouchable
                 className="border-green-800 border-2 pt-1 px-5 py-2 w-full rounded-lg mb-4"
                 onPress={() => pickImage()}
               >
                 <Text className="text-center font-montmed text-xl">
                   Upload Answer
                 </Text>
-              </TouchableScale>
-              <TouchableScale
+              </MarcusTouchable>
+              <MarcusTouchable
                 disabled={loading}
                 className={`inline-flex flex-row items-center justify-center max-w-[256px] ${
                   loading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'
@@ -224,7 +224,7 @@ export default function ExamQuestion({navigation}) {
                 <Text className={"font-montmed text-white text-center text-2xl"}>
                   {!loading ? "Mark Answer" : 'Marking Answer'}
                 </Text>
-              </TouchableScale>
+              </MarcusTouchable>
             </View>
           </View>
         </TouchableWithoutFeedback>
