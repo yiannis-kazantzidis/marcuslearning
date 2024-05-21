@@ -52,6 +52,7 @@
     "punycode": "^2.3.1",
     "react": "18.2.0",
     "react-native": "0.74.1",
+    "react-native-alert-notification": "^0.4.0",
     "react-native-animated-loader": "^1.0.0",
     "react-native-animated-pagination-dots": "^0.1.73",
     "react-native-buffer": "^6.0.3",

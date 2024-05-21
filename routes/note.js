@@ -14,6 +14,7 @@ import {
     ExpandingDot,
     SlidingDot,
 } from 'react-native-animated-pagination-dots';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
 const INTRO_DATA = [
     {
@@ -88,6 +89,8 @@ export default function Note({navigation}) {
     const noteID = route.params.id;
     const title = route.params.title;
     const content = route.params.content
+
+
     console.log(route.params)
 
     console.log(title)
@@ -169,6 +172,8 @@ export default function Note({navigation}) {
     }
 
     return (
+      <AlertNotificationRoot>
+
         <View className={"bg-[#f2f2f2] flex-1"}>
           <View className='p-4'>
             <Text className='text-green-900 font-recmed text-3xl'>{title}</Text>
@@ -256,8 +261,26 @@ export default function Note({navigation}) {
                         />
                     </View>
               </View>
+              <MarcusTouchable>
 
-                <Text className='font-recmed text-3xl mt-5 text-green-800 pl-4'>Exam Questions</Text>
+
+              </MarcusTouchable>
+
+              <View className='flex flex-row mt-5 gap-x-2 items-center'>
+                <Text className='font-recmed text-3xl text-green-800 pl-4'>Exam Questions</Text>
+                <MarcusTouchable onPress={() => {
+                          Dialog.show({
+                            type: ALERT_TYPE.WARNING,
+                            title: <Text className='font-montsemibold'>This Feature is in Beta</Text>,
+                            textBody: <Text className='font-montmed'>Marcus may provide inaccurate marking and feedback on exam questions, its recommended you assess the accuracy of the mark given yourself.</Text>,
+                            button: <Text className='font-montmed'>Close</Text>,
+                          })
+                }} className='bg-green-600/20 rounded-lg px-2 py-1 border-2 border-green-600'>
+                  <Text className='font-montmed text-green-800'>BETA</Text>
+                </MarcusTouchable>
+
+              </View>
+
                 <View className='flex-1 flex-col gap-y-4 py-5 p-4'>
                     {
                       questions ? questions.questions.map((v, k) => {
@@ -275,6 +298,8 @@ export default function Note({navigation}) {
 
 
         </View>
+      </AlertNotificationRoot>
+
     )
 }
 
