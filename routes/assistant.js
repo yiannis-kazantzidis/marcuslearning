@@ -10,6 +10,7 @@ import LottieView from 'lottie-react-native';
 import { supabase } from '../supabase/supabase';
 import userContext from '../components/userContext';
 import MarcusTouchable from '../components/MarcusTouchable';
+import Voice from '@react-native-voice/voice';
 
 export default function Assistant({navigation}) {
   const route = useRoute();
@@ -22,7 +23,6 @@ export default function Assistant({navigation}) {
   const [userName, setUserName] = useState(null)
   const [messages, setMessages] = useState([])
   const [firstCommunication, setFirstCommunication] = useState(true)
-
   const { userID } = useContext(userContext);
 
   useEffect(() => {
@@ -45,10 +45,29 @@ export default function Assistant({navigation}) {
       setNoteContext(data[0].content)
     }
 
+    const onSpeechStarted = () => {
+      console.log('Speech started');
+      startRecording()
+    };
+
+    const onSpeechEnded = () => {
+      console.log('Speech ended');
+      stopRecording()
+    };
+
+    console.log('speech initiated.')
+
+    Voice.onSpeechStart = onSpeechStarted;
+    Voice.onSpeechEnd = onSpeechEnded;
 
     getName()
     getContext()
     configureAudioMode();
+
+    // Clean up event listeners
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
   }, []);
 
   useEffect(() => {
@@ -96,6 +115,10 @@ export default function Assistant({navigation}) {
   };
   
   const startRecording = async () => {
+    if (isPlaying) {
+      await stopSound();
+    }
+
     setIsRecording(true);
     configureAudioMode()
     try {
@@ -114,6 +137,15 @@ export default function Assistant({navigation}) {
     }
   };
 
+  const stopSound = async () => {
+    try {
+      await sound.unloadAsync();
+      setIsPlaying(false);
+    } catch (error) {
+      console.log('Error stopping sound:', error);
+    }
+  };
+
   const stopRecording = async () => {
     setIsRecording(false);
     Audio.setAudioModeAsync({ allowsRecordingIOS: false })
@@ -127,6 +159,9 @@ export default function Assistant({navigation}) {
       console.error(error);
     }
   };
+
+  Voice.onSpeechStart = startRecording;
+  Voice.onSpeechEnd = stopRecording;
 
   const sendAudioToServer = async (uri) => {
     setIsLoading(true);

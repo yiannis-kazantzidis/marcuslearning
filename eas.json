@@ -10,12 +10,16 @@
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "ios": {
+        "simulator": true
+      }
     },
     "production": {
       "channel": "production"
     }
   },
+  
   "submit": {
     "production": {}
   }
