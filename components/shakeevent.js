@@ -11,7 +11,9 @@ const ShakeEventExpo = {
         const acceleration = Math.sqrt(x * x + y * y + z * z);
         // Set a threshold value for acceleration to detect shaking
         if (acceleration > 5) {
-          callback();
+          setTimeout(() => {
+            callback();
+          }, 750);
         }
       });
     };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { View, Button, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Audio } from 'expo-av';
 import { useRoute } from "@react-navigation/native";
@@ -19,11 +19,18 @@ export default function Assistant({navigation}) {
   const [isLoading, setIsLoading] = useState(false);
   const [recording, setRecording] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const currentRecording = useRef(false)
   const [noteContext, setNoteContext] = useState(null)
   const [userName, setUserName] = useState(null)
   const [messages, setMessages] = useState([])
   const [firstCommunication, setFirstCommunication] = useState(true)
   const { userID } = useContext(userContext);
+  const speechGapTimer = useRef(null);
+  const recordingRef = useRef(recording);
+  const messagesRef = useRef(messages);
+  const nameRef = useRef(userName);
+  const noteRef = useRef(noteContext)
+  const speechStopRef = useRef(false)
 
   useEffect(() => {
     const getName = async() => {
@@ -45,20 +52,37 @@ export default function Assistant({navigation}) {
       setNoteContext(data[0].content)
     }
 
+    console.log('here is the recording in the update' + recordingRef.current)
+
+    const handleSpeechGap = () => {
+      console.log('this is the recording in the func ' + recordingRef.current)
+      clearTimeout(speechGapTimer.current);
+      speechGapTimer.current = setTimeout(() => {
+        if (!speechStopRef.current) {
+          onSpeechEnded();
+        }
+
+        speechStopRef.current = true
+      }, 2000);
+    };
+  
     const onSpeechStarted = () => {
       console.log('Speech started');
-      startRecording()
+      if (!currentRecording.current) {
+        startRecording()
+      }
+      currentRecording.current = true
+      handleSpeechGap();
     };
-
+  
     const onSpeechEnded = () => {
       console.log('Speech ended');
       stopRecording()
     };
 
-    console.log('speech initiated.')
+    Voice.onSpeechRecognized = onSpeechStarted;
+    Voice.start('en-US')
 
-    Voice.onSpeechStart = onSpeechStarted;
-    Voice.onSpeechEnd = onSpeechEnded;
 
     getName()
     getContext()
@@ -70,9 +94,23 @@ export default function Assistant({navigation}) {
     };
   }, []);
 
+
   useEffect(() => {
-    console.log(userName)
-  }, [noteContext])
+    recordingRef.current = recording;
+  }, [recording]);
+
+  useEffect(() => {
+    noteRef.current = noteContext;
+  }, [noteContext]);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  useEffect(() => {
+    nameRef.current = userName;
+  }, [userName]);
+
   const toBuffer = async (blob) => {
     const uri = await toDataURI(blob);
     const base64 = uri.replace(/^.*,/g, "");
@@ -116,7 +154,7 @@ export default function Assistant({navigation}) {
   
   const startRecording = async () => {
     if (isPlaying) {
-      await stopSound();
+      return ' '
     }
 
     setIsRecording(true);
@@ -147,21 +185,18 @@ export default function Assistant({navigation}) {
   };
 
   const stopRecording = async () => {
+    console.log('here is the recording:' + recordingRef.current)
     setIsRecording(false);
-    Audio.setAudioModeAsync({ allowsRecordingIOS: false })
     try {
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
+      await recordingRef.current.stopAndUnloadAsync();
+      const uri = recordingRef.current.getURI();
 
-
+      Voice.stop()
       await sendAudioToServer(uri);
     } catch (error) {
       console.error(error);
     }
   };
-
-  Voice.onSpeechStart = startRecording;
-  Voice.onSpeechEnd = stopRecording;
 
   const sendAudioToServer = async (uri) => {
     setIsLoading(true);
@@ -176,11 +211,11 @@ export default function Assistant({navigation}) {
       });
 
       if (firstCommunication) {
-        formData.append('context', noteContext);
-        formData.append('name', userName);
+        formData.append('context', noteRef.current);
+        formData.append('name', nameRef.current);
       }
 
-      formData.append('messages', JSON.stringify(messages));
+      formData.append('messages', JSON.stringify(messagesRef.current));
 
 
       const response = await fetch('https://kqouyqkdkkihmwezwjxy.supabase.co/functions/v1/generateAudioResponse', {
@@ -224,19 +259,42 @@ export default function Assistant({navigation}) {
       const blob = await audio.blob();
       const buffer = await toBuffer(blob);
       const tempFilePath = await constructTempFilePath(buffer);
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
       const { sound } = await Audio.Sound.createAsync({ uri: tempFilePath });
 
       await sound.playAsync();
 
       sound.setOnPlaybackStatusUpdate(status => {
-        if (status.isPlaying) {
+        if (status.didJustFinish) {
+          const doJITOperations = async() => {
+            console.log('Audio has finished playing');
+            await Audio.setAudioModeAsync({
+              allowsRecordingIOS: false,
+              playsInSilentModeIOS: true,
+              
+            });
+  
+            currentRecording.current = false
+            speechStopRef.current = false
+            console.log('voice should start')
+            Voice.start('en-US')
+
+          }
+
+          doJITOperations()
+
+        } else if (status.isPlaying) {
           if (status !== isPlaying) {
             setIsPlaying(true);
+            currentRecording.current = true
           }
         } else {
           if (status !== isPlaying) {
             setIsPlaying(false);
-          }        }
+          }}
       });
 
     } catch (error) {
@@ -246,7 +304,6 @@ export default function Assistant({navigation}) {
     if (firstCommunication) {
       setFirstCommunication(false)
     }
-
     setIsLoading(false);
   };
 
