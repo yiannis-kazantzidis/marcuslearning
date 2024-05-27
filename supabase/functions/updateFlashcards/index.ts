@@ -27,20 +27,22 @@ Deno.serve(async (req) => {
   const id = data[0].id
   const flashcards = cardsObj.flashcards
 
-  flashcards.push({frontCard, backCard})
+  flashcards.push({front: frontCard, back: backCard})
+
+  const cardsJSON = JSON.stringify({flashcards: flashcards})
+
+  console.log(id, cardsJSON)
+
 
   const { dta, err } = await supabase
     .from('flashcards')
-    .upsert({id, flashcards})
+    .update({ flashcards: cardsJSON })
+    .eq('id', id)
     .select()
 
     if (err) {
       console.log('ERROR UPDATING FLASHCARDS: ' + err)
     }
-
-
-  
-
 
   return new Response(
     JSON.stringify(dta),

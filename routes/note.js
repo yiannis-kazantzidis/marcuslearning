@@ -14,6 +14,7 @@ import BottomSheet, {
   BottomSheetTextInput,
   BottomSheetView
 } from "@gorhom/bottom-sheet";
+import ContextMenu from "react-native-context-menu-view";
 import * as Haptics from "expo-haptics";
 import {
     ScalingDot,
@@ -40,18 +41,26 @@ export default function Note({navigation}) {
       (item) => {
         console.log(item)
         return (
-          <View style={[styles.itemContainer, { width }]}>
-            <FlipCard flipHorizontal={true} flipVertical={false}> 
-                <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
-                  <Text className='font-montmed'>{item.item.front}</Text>
-                </View>
+          <ContextMenu
+            actions={[{ title: "Delete Flashcard", destructive: true }, { title: "Edit Flashcard" }]}
+            onPress={(e) => {
+              console.warn(
+                `Pressed ${e.nativeEvent.name} at index ${e.nativeEvent.index}`
+              );
+            }}
+          > 
+            <View style={[styles.itemContainer, { width }]}>
+              <FlipCard flipHorizontal={true} flipVertical={false}> 
+                  <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
+                    <Text className='font-montmed'>{item.item.front}</Text>
+                  </View>
 
-                <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
-                  <Text className='font-montregular'>{item.item.back}</Text>
-                </View>
-            </FlipCard>
-
-          </View>
+                  <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
+                    <Text className='font-montregular'>{item.item.back}</Text>
+                  </View>
+              </FlipCard>
+            </View>
+          </ContextMenu>
         );
       },
       [width],
@@ -360,9 +369,7 @@ export default function Note({navigation}) {
 
               <MarcusTouchable
                 className={`inline-flex flex-row items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 w-full mb-6`}
-                onPress={async () => {
-
-                }}
+                onPress={createFlashcard}
               >
                 <Text className={"font-montmed text-white text-center text-2xl"}>
                   {"Create Flashcard"}
