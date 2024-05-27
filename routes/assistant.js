@@ -31,6 +31,8 @@ export default function Assistant({navigation}) {
   const nameRef = useRef(userName);
   const noteRef = useRef(noteContext)
   const speechStopRef = useRef(false)
+  const soundRef = useRef(false)
+
 
   useEffect(() => {
     const getName = async() => {
@@ -91,6 +93,7 @@ export default function Assistant({navigation}) {
     // Clean up event listeners
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
+      stopSound()
     };
   }, []);
 
@@ -116,6 +119,27 @@ export default function Assistant({navigation}) {
     const base64 = uri.replace(/^.*,/g, "");
     return Buffer.from(base64, "base64");
   };
+
+  const stopSound = async(startListening) => {
+    if (soundRef.current) {
+      await soundRef.current.unloadAsync()
+      soundRef.current = null
+      currentRecording.current = false
+      speechStopRef.current = false
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+      });
+
+      setIsPlaying(false)
+
+      if (startListening) {
+        Voice.start('en-US')
+      }
+    }
+  }
+
 
   const toDataURI = (blob) =>
     new Promise((resolve) => {
@@ -175,15 +199,6 @@ export default function Assistant({navigation}) {
     }
   };
 
-  const stopSound = async () => {
-    try {
-      await sound.unloadAsync();
-      setIsPlaying(false);
-    } catch (error) {
-      console.log('Error stopping sound:', error);
-    }
-  };
-
   const stopRecording = async () => {
     console.log('here is the recording:' + recordingRef.current)
     setIsRecording(false);
@@ -240,7 +255,7 @@ export default function Assistant({navigation}) {
       const data = {
         model: 'tts-1',
         input: text,
-        voice: 'echo',
+        voice: 'onyx',
       };
 
       const audio = await fetch(url, {
@@ -249,6 +264,7 @@ export default function Assistant({navigation}) {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
+        responseType: 'stream',
         body: JSON.stringify(data),
       })
 
@@ -263,11 +279,14 @@ export default function Assistant({navigation}) {
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-      const { sound } = await Audio.Sound.createAsync({ uri: tempFilePath });
+      soundRef.current = new Audio.Sound()
+      await soundRef.current.loadAsync({
+        uri: tempFilePath
+      })
 
-      await sound.playAsync();
+      await soundRef.current.playAsync();
 
-      sound.setOnPlaybackStatusUpdate(status => {
+      soundRef.current.setOnPlaybackStatusUpdate(status => {
         if (status.didJustFinish) {
           const doJITOperations = async() => {
             console.log('Audio has finished playing');
@@ -329,15 +348,17 @@ export default function Assistant({navigation}) {
 
       </View>
 
-      <MarcusTouchable
-            disabled={isLoading}
-            className={`inline-flex flex-row my-12 items-center justify-center max-w-[256px] ${isLoading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'} rounded-lg pt-1 px-5 py-2 w-full`}
-            onPress={isRecording ? stopRecording : startRecording}
+      { isPlaying ? (
+          <MarcusTouchable
+            className={`inline-flex flex-row my-12 items-center justify-center max-w-[256px] bg-[#007d56] rounded-lg pt-1 px-5 py-2 w-full`}
+            onPress={() => stopSound(true)}
           >
-            <Text className={"font-montmed text-white text-center text-2xl"}>
-              {isRecording ? "Stop Talking" : 'Start Talking'}
-            </Text>
-      </MarcusTouchable>
+            <Text className={"font-montmed text-white text-center text-2xl"}>Interrupt</Text>
+          </MarcusTouchable>
+        )
+      : '' }
+
+
 
     </View>
   );
