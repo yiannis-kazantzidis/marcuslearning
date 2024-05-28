@@ -160,42 +160,86 @@ Deno.serve(async (req) => {
         } else {
             const id = data.id
 
-            const flashcards = await fetch(
-                "https://kqouyqkdkkihmwezwjxy.supabase.co/functions/v1/createFlashcards",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ title, content, userID, noteID: id}),
-                },
-            );
+            const createFlashcards = async() => {
+                const prompt = "After reviewing the text given to you, create a set of flashcards based on the important information and key concepts. Determine the number of flashcards based on the amount and complexity of the information. Each flashcard should have 'back' (answer to the description and) 'front' (description of the answer information) properties. As an example the front could be: Finance raised by issuing shares in a business. And the back for that would be: Share Capital. Return the flashcards as a stringified JSON object with a single 'flashcards' property, which is an array of flashcard objects. Example flashcard: {'back': 'The process by which plants convert sunlight into energy', 'front': 'Photosynthesis'}. Ensure the flashcards cover the most important information and facilitate learning and retention. Dont present the question as for example What is the British Parliament made up of? Present it as The 3 Components of the British Parliament (as an example). You MUST Only return the JSON data in your response, nothing else. The text on the front and back should be short and consise." 
 
-            const multipleChoice = await fetch(
-                "https://kqouyqkdkkihmwezwjxy.supabase.co/functions/v1/createMultipleChoice",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ userID, noteID: id, content }),
-                },
-            );
-
-            const examStyleQuestions = await fetch(
-                'https://kqouyqkdkkihmwezwjxy.supabase.co/functions/v1/createQuestions',
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ userID, noteID: id, content }),
-                },
-            )
-    
-            if (flashcards.ok) {
-                console.log('flashcards created!')
+                const response = await anthropic.messages.create({
+                  max_tokens: 4096,
+                  system: prompt,
+                  messages: [
+                    { role: "user", content: content }
+                  ],
+                  model: 'claude-3-haiku-20240307'
+                });
+              
+                const flashcards = response.content[0].text
+              
+                const repaired = await  extractJSON(flashcards)
+              
+                const { data, error } = await supabase
+                  .from('flashcards')
+                  .insert({flashcards: JSON.stringify(repaired), notes_id: id, user_id: userID})
+              
+                if (error) {
+                  console.log(error)
+                }
             }
+
+
+
+            const createMultipleChoice = async() => {
+                const prompt = "Create a set of multiple choice questions based on the given text, covering the most important information. Each question should have one correct answer and three plausible but incorrect answers that are related to the topic but still wrong. You MUST fact check the correct answers you give and make sure they are correct, no mistakes are allowed. Randomize the answer order. Return your response with the questions as a stringified JSON object with a 'questions' array. Example question format: {'question': 'What is the process by which plants convert sunlight into energy', 'correct_answer': (the unique id (uid) of the answers array that has the correct answer), answers: [{answer: 'Chlorophyll absorption', uid: (a unique id), {answer: 'Photosynthesis', uid: (a unique id)}, {answer: 'Cellular respiration', uid: (a unique id)}, {answer: 'Light refraction', uid: (unqiue id)}]}. Also you should aim to give atleast 5 different questions but do as many as you think is appropriate regarding the length and context of the text given. You also should re-word the correct answer to emphasise understanding over memorisiation. Only return the JSON data, nothing else."
+
+                const response = await anthropic.messages.create({
+                    max_tokens: 4096,
+                    system: prompt,
+                    messages: [
+                      { role: "user", content: content }
+                    ],
+                    model: 'claude-3-haiku-20240307'
+                  });
+                
+                  const questions = response.content[0].text
+                  const repaired = await extractJSON(questions)
+                
+                  const { data, err } = await supabase
+                    .from('multiple_choice_questions')
+                    .insert({questions: JSON.stringify(repaired), notes_id: id, user_id: userID})
+                
+                  if (err) {
+                    console.log('there has been an question error ' + err)
+                  }
+            }
+
+            const createQuestions = async() => {
+                const newPrompt = "Please analyze the provided text and create exam-style questions that are each worth 4 marks, suitable for the UK Education System (A Levels / GCSE). The questions should focus on assessing straightforward factual recall, definitions, or simple applications of concepts from the text. Each question should be concise, with the mark scheme criteria narrow in scope and targeted to specific pieces of information or basic concepts covered in the text. Generate a JSON object with the following structure: { 'questions': [{ 'question': '(Concise 4-mark question text focused on definitions, facts or simple applications)', 'difficultyLevel': '(easy, medium, or hard)', 'markScheme': { 'totalMarks': 4, 'rubric': [{ 'criteria': '(Specific criterion for earning 1 mark, e.g. States/Identifies/Defines X)', 'marks': 1 }, { 'criteria': '(Specific criterion for earning 1 mark, e.g. Gives an example of X)', 'marks': 1 }] } }, { 'question': '(Another concise 4-mark question...)', ... }] } You may generate as many appropriate 4-mark questions as the provided text allows. The questions and mark scheme criteria should reflect what is typically seen for questions of this mark allocation on UK exam board assessments."
+                const prompt = "Please analyze the provided text and create exam-style questions that are each worth 4 marks, suitable for the UK Education System (A Levels / GCSE). The questions should replicate what could come up in an exam. Each rubric you create should account for one mark, so there will be four criteria per question. Generate a JSON object with the following structure: { questions: [{ question: '(4-mark question text)', difficultyLevel: '(easy, medium, or hard)', markScheme: { totalMarks: 4, rubric: [{ criteria: '(criterion for 1 mark, e.g., Identifies one accurate advantage)', marks: 1 }, { criteria: '(criterion for 1 mark, e.g., Provides a relevant example)', marks: 1 }] } }, { question: '(another 2-mark question text)', difficultyLevel: '(easy, medium, or hard)', markScheme: { totalMarks: 2, rubric: [{ criteria: '(criterion for 1 mark)', marks: 1 }, { criteria: '(criterion for 1 mark)', marks: 1 }] } }] }. You may generate as many 4-mark questions as you deem appropriate based on the provided text."
+              
+                const response = await anthropic.messages.create({
+                  max_tokens: 4096,
+                  system: newPrompt,
+                  messages: [
+                    { role: "user", content: content }
+                  ],
+                  model: 'claude-3-haiku-20240307'
+                });
+              
+                const questions = response.content[0].text
+              
+                console.log('questions before repaired: ' + questions)
+              
+                const repaired = await extractJSON(questions)
+              
+                const { data, err } = await supabase
+                  .from('two_marker_questions')
+                  .insert({questions: JSON.stringify(repaired), notes_id: id, user_id: userID})
+              
+                console.log('questions repaired: ' + repaired)
+            }
+
+            await createFlashcards()
+            await createMultipleChoice()
+            await createQuestions()
         }
 
         return new Response(JSON.stringify({ text: jsonObject }), {

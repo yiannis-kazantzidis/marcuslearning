@@ -5,17 +5,47 @@
 // Setup type definitions for built-in Supabase Runtime APIs
 /// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
-console.log("Hello from Functions!")
+import { createClient } from "npm:@supabase/supabase-js@2.41.1";
 
 Deno.serve(async (req) => {
-  const { name } = await req.json()
-  const data = {
-    message: `Hello ${name}!`,
+  const supabaseUrl = "https://kqouyqkdkkihmwezwjxy.supabase.co";
+  const supabaseAnonKey = Deno.env.get('supabaseAnonKey');
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+  const { noteID, cardID, userID } = await req.json()
+
+  const { data, error } = await supabase
+    .from('flashcards')
+    .select('flashcards, id')
+    .eq('notes_id', noteID)
+
+  if (error) {
+    console.log('ERROR UPDATING FLASHCARDS: ' + error)
   }
 
+  const cardsObj = JSON.parse(data[0].flashcards)
+  const id = data[0].id
+  const flashcards = cardsObj.flashcards
+
+  const filteredArray = flashcards.slice(0, cardID).concat(flashcards.slice(cardID + 1));
+
+  const cardsJSON = JSON.stringify({flashcards: filteredArray})
+
+  console.log(id, cardsJSON)
+
+
+  const { dta, err } = await supabase
+    .from('flashcards')
+    .update({ flashcards: cardsJSON })
+    .eq('id', id)
+    .select()
+
+    if (err) {
+      console.log('ERROR UPDATING FLASHCARDS: ' + err)
+    }
+
   return new Response(
-    JSON.stringify(data),
-    { headers: { "Content-Type": "application/json" } },
+    JSON.stringify(dta),
   )
 })
 

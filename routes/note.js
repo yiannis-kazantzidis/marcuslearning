@@ -39,14 +39,12 @@ export default function Note({navigation}) {
     const scrollX = useRef(new Animated.Value(0)).current;
     const renderItem = useCallback(
       (item) => {
-        console.log(item)
         return (
           <ContextMenu
             actions={[{ title: "Delete Flashcard", destructive: true }, { title: "Edit Flashcard" }]}
-            onPress={(e) => {
-              console.warn(
-                `Pressed ${e.nativeEvent.name} at index ${e.nativeEvent.index}`
-              );
+            onPress={async(e) => {
+              console.log('flashcard deleted' + e.nativeEvent.index)
+              await deleteFlashcard(e.nativeEvent.index)
             }}
           > 
             <View style={[styles.itemContainer, { width }]}>
@@ -99,9 +97,31 @@ export default function Note({navigation}) {
     const handleClosePress = () => bottomSheetRef.current?.close();
     const handleOpenPress = () => bottomSheetRef.current?.expand();
 
-    console.log(route.params)
+    const deleteFlashcard = async(cardID) => {
+      setLoading(true)
 
-    console.log(title)
+      const response = await fetch('https://kqouyqkdkkihmwezwjxy.supabase.co/functions/v1/deleteFlashcard', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({noteID, cardID, userID}),
+      })
+
+      const { data, error } = await supabase
+        .from("flashcards")
+        .select("*")
+        .eq("user_id", userID)
+        .eq('notes_id', noteID)
+
+      if (error) {
+          console.log(error)
+      }
+
+      setFlashCardsData(data)
+      setLoading(false)
+      handleClosePress()
+    }
 
     const createFlashcard = async() => {
       if (!frontCard || !backCard) {

@@ -38,6 +38,6 @@
     "updates": {
       "url": "https://u.expo.dev/94a95cdd-212e-4285-9052-1a930b1ac590"
     },
-    "plugins": ["expo-apple-authentication", "expo-font", ["@react-native-voice/voice", { "microphonePermission": "CUSTOM: Allow $(Marcus) to access the microphone", "speechRecognitionPermission": "CUSTOM: Allow $(Marcus) to securely recognize user speech"}]]
+    "plugins": ["expo-apple-authentication", "expo-font", ["expo-document-picker", {"iCloudContainerEnvironment": "Production"}], ["@react-native-voice/voice", { "microphonePermission": "CUSTOM: Allow $(Marcus) to access the microphone", "speechRecognitionPermission": "CUSTOM: Allow $(Marcus) to securely recognize user speech"}]]
   }
 }
