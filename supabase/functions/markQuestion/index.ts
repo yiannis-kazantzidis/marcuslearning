@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
   }
   
   const { id, questionID, userID, answer, noteID } = await req.json()
-  const prompt = "Please assess the given answer against each provided rubric. Each rubric is worth 1 mark. For each rubric, determine if the answer meets the specified criteria. After evaluating the answer against all rubrics, sum up the marks for the rubrics that the answer satisfies. Provide your assessment in the following format:{ mark: (total marks awarded based on the number of satisfied rubrics), feedback: '(concise feedback on the answer's strengths and areas for improvement)'}."
+  const prompt = "Please assess the given answer against the marking scheme provided, and also your own access to helpful information on the web that can aid accurate marking. determine if the answer meets the specified criteria. After evaluating the answer against the marking scheme, sum up the marks you award out of the total marks available for the question. Provide your assessment in the following format:{ mark: (total marks awarded based on how well you think the answer satisfies the marking scheme), feedback: '(concise feedback on the answer's strengths and areas for improvement (if any))'}."
 
   console.log(id, questionID, userID, answer, noteID)
 
@@ -62,27 +62,37 @@ Deno.serve(async (req) => {
 
   console.log(markScheme)
 
-  const rubrics = JSON.stringify(markScheme.rubric)
 
-  const response = await anthropic.messages.create({
-    max_tokens: 4096,
-    system: prompt,
-    messages: [
-      { role: "user", content: `Question: ${questions.questions[id].question} Rubric: ${rubrics} user Answer: ${answer}` }
-    ],
-     model: 'claude-3-haiku-20240307'
-  });
 
-  const responseMessage = response.content;
-  const repaired = await extractJSON(responseMessage[0].text)
+  const options = {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3-sonar-small-32k-online',
+      messages: [
+        {role: 'system', content: prompt},
+        {role: 'user', content: `Question: ${questions.questions[id].question} Rubric: ${rubrics} user Answer: ${answer}`}
+      ]
+    })
+  };
+    
+  fetch('https://api.perplexity.ai/chat/completions', options)
+    .then(response => response.json())
+    .then(response => async() => {
+        const text = response.choices[0].message.content
+        
+        const repaired = await extractJSON(text)
 
-  console.log('repaired: ' + repaired)
-
-  return new Response(JSON.stringify({ text: JSON.stringify(repaired) }), {
-    headers: { "Content-Type": "application/json" },
-    status: 200
-  });
-
+        return new Response(JSON.stringify({ text: JSON.stringify(repaired) }), {
+          headers: { "Content-Type": "application/json" },
+          status: 200
+        });
+    })
+    .catch(err => console.error(err));
 })
 
 /* To invoke locally:

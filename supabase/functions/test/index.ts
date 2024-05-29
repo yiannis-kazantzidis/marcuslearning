@@ -2,6 +2,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.43.1";
 import Anthropic from 'npm:@anthropic-ai/sdk@0.20.6';
 import { jsonrepair } from 'npm:jsonrepair@3.7.1'
 import { YoutubeTranscript } from 'npm:youtube-transcript@1.2.1';
+import Perplexity from 'npm:perplexity-sdk@1.0.4';
 
 Deno.serve(async (req) => {
     const GoogleKey = Deno.env.get('GoogleAPI_KEY');
@@ -12,7 +13,7 @@ Deno.serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
     const anthropic = new Anthropic({
         apiKey: ANTRHOPIC_API_KEY,
-    });
+    });    
 
     async function extractJSON(text: string) {
         console.log('extract json function has been called: ' + text);
@@ -212,29 +213,41 @@ Deno.serve(async (req) => {
             }
 
             const createQuestions = async() => {
-                const newPrompt = "Please analyze the provided text and create exam-style questions that are each worth 4 marks, suitable for the UK Education System (A Levels / GCSE). The questions should focus on assessing straightforward factual recall, definitions, or simple applications of concepts from the text. Each question should be concise, with the mark scheme criteria narrow in scope and targeted to specific pieces of information or basic concepts covered in the text. Generate a JSON object with the following structure: { 'questions': [{ 'question': '(Concise 4-mark question text focused on definitions, facts or simple applications)', 'difficultyLevel': '(easy, medium, or hard)', 'markScheme': { 'totalMarks': 4, 'rubric': [{ 'criteria': '(Specific criterion for earning 1 mark, e.g. States/Identifies/Defines X)', 'marks': 1 }, { 'criteria': '(Specific criterion for earning 1 mark, e.g. Gives an example of X)', 'marks': 1 }] } }, { 'question': '(Another concise 4-mark question...)', ... }] } You may generate as many appropriate 4-mark questions as the provided text allows. The questions and mark scheme criteria should reflect what is typically seen for questions of this mark allocation on UK exam board assessments."
+                const newPrompt = "Please analyze the provided text and create exam-style questions that are each worth 4 marks, suitable for the UK Education System (A Levels / GCSE). The questions should represent what would come up in an actual exam for that topic. Each question should be concise, with the mark scheme criteria narrow in scope and targeted to specific pieces of information or basic concepts covered in the text. Generate a JSON object with the following structure: { 'questions': [{ 'question': '(Concise 4-mark question text focused on definitions, facts or simple applications)', 'difficultyLevel': '(easy, medium, or hard)', 'markScheme': 'A comprenhensive marking scheme you will be able to apply to an answer and give an accurate mark', { 'question': '(Another concise 4-mark question...)', ... }] } You may generate as many appropriate 4-mark questions as the provided text allows. The questions and mark scheme criteria should reflect what is typically seen for questions of this mark allocation on UK exam board assessments."
                 const prompt = "Please analyze the provided text and create exam-style questions that are each worth 4 marks, suitable for the UK Education System (A Levels / GCSE). The questions should replicate what could come up in an exam. Each rubric you create should account for one mark, so there will be four criteria per question. Generate a JSON object with the following structure: { questions: [{ question: '(4-mark question text)', difficultyLevel: '(easy, medium, or hard)', markScheme: { totalMarks: 4, rubric: [{ criteria: '(criterion for 1 mark, e.g., Identifies one accurate advantage)', marks: 1 }, { criteria: '(criterion for 1 mark, e.g., Provides a relevant example)', marks: 1 }] } }, { question: '(another 2-mark question text)', difficultyLevel: '(easy, medium, or hard)', markScheme: { totalMarks: 2, rubric: [{ criteria: '(criterion for 1 mark)', marks: 1 }, { criteria: '(criterion for 1 mark)', marks: 1 }] } }] }. You may generate as many 4-mark questions as you deem appropriate based on the provided text."
               
-                const response = await anthropic.messages.create({
-                  max_tokens: 4096,
-                  system: newPrompt,
-                  messages: [
-                    { role: "user", content: content }
-                  ],
-                  model: 'claude-3-haiku-20240307'
-                });
+                const options = {
+                    method: 'POST',
+                    headers: {
+                      accept: 'application/json',
+                      'content-type': 'application/json',
+                      authorization: `Bearer ${Deno.env.get('PERPLEXITY_API_KEY')}`
+                    },
+                    body: JSON.stringify({
+                      model: 'llama-3-sonar-small-32k-online',
+                      messages: [
+                        {role: 'system', content: newPrompt},
+                        {role: 'user', content: content}
+                      ]
+                    })
+                  };
+                  
+                fetch('https://api.perplexity.ai/chat/completions', options)
+                .then(response => response.json())
+                .then(response => async() => {
+                    const questions = response.choices[0].message.content
+                    
+                    console.log('questions before repaired: ' + questions)
               
-                const questions = response.content[0].text
-              
-                console.log('questions before repaired: ' + questions)
-              
-                const repaired = await extractJSON(questions)
-              
-                const { data, err } = await supabase
-                  .from('two_marker_questions')
-                  .insert({questions: JSON.stringify(repaired), notes_id: id, user_id: userID})
-              
-                console.log('questions repaired: ' + repaired)
+                    const repaired = await extractJSON(questions)
+                  
+                    const { data, err } = await supabase
+                      .from('two_marker_questions')
+                      .insert({questions: JSON.stringify(repaired), notes_id: id, user_id: userID})
+                  
+                    console.log('questions repaired: ' + repaired)
+                })
+                .catch(err => console.error(err));
             }
 
             await createFlashcards()
