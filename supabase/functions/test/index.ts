@@ -212,8 +212,10 @@ Deno.serve(async (req) => {
                   }
             }
 
+            console.log('calling create questions')
+
             const createQuestions = async() => {
-                const newPrompt = "Please analyze the provided text and create exam-style questions that are each worth 4 marks, suitable for the UK Education System (A Levels / GCSE). The questions should represent what would come up in an actual exam for that topic. Each question should be concise, with the mark scheme criteria narrow in scope and targeted to specific pieces of information or basic concepts covered in the text. Generate a JSON object with the following structure: { 'questions': [{ 'question': '(Concise 4-mark question text focused on definitions, facts or simple applications)', 'difficultyLevel': '(easy, medium, or hard)', 'markScheme': 'A comprenhensive marking scheme you will be able to apply to an answer and give an accurate mark', { 'question': '(Another concise 4-mark question...)', ... }] } You may generate as many appropriate 4-mark questions as the provided text allows. The questions and mark scheme criteria should reflect what is typically seen for questions of this mark allocation on UK exam board assessments."
+                const newPrompt = 'Please analyze the provided text and create multiple (no more than 5) exam-style questions that are each worth 4 marks, suitable for the UK Education System (A Levels / GCSE). The questions should be what would come up in an actual exam for that topic. Each question should be concise, with the mark scheme criteria narrow in scope and targeted to specific pieces of information or basic concepts covered in the text. Generate a JSON object with the following structure: { "questions": [ { "question": "(Concise 4-mark question)", "markScheme": { "totalMarks": 4, "rubric": [ { "criteria": "(criterion for 1 mark)"}, { "criteria": "(criterion for 2 mark"}, { "criteria": "(criterion for 3 mark"}, { "criteria": "(criterion for 4 mark, e.g"} ] } }.'
                 const prompt = "Please analyze the provided text and create exam-style questions that are each worth 4 marks, suitable for the UK Education System (A Levels / GCSE). The questions should replicate what could come up in an exam. Each rubric you create should account for one mark, so there will be four criteria per question. Generate a JSON object with the following structure: { questions: [{ question: '(4-mark question text)', difficultyLevel: '(easy, medium, or hard)', markScheme: { totalMarks: 4, rubric: [{ criteria: '(criterion for 1 mark, e.g., Identifies one accurate advantage)', marks: 1 }, { criteria: '(criterion for 1 mark, e.g., Provides a relevant example)', marks: 1 }] } }, { question: '(another 2-mark question text)', difficultyLevel: '(easy, medium, or hard)', markScheme: { totalMarks: 2, rubric: [{ criteria: '(criterion for 1 mark)', marks: 1 }, { criteria: '(criterion for 1 mark)', marks: 1 }] } }] }. You may generate as many 4-mark questions as you deem appropriate based on the provided text."
               
                 const options = {
@@ -234,7 +236,8 @@ Deno.serve(async (req) => {
                   
                 fetch('https://api.perplexity.ai/chat/completions', options)
                 .then(response => response.json())
-                .then(response => async() => {
+                .then(async response => {
+                    console.log('create questions returned: ' + response)
                     const questions = response.choices[0].message.content
                     
                     console.log('questions before repaired: ' + questions)

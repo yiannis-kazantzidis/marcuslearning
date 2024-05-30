@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
     
   fetch('https://api.perplexity.ai/chat/completions', options)
     .then(response => response.json())
-    .then(response => async() => {
+    .then(async response => {
         const text = response.choices[0].message.content
         
         const repaired = await extractJSON(text)
