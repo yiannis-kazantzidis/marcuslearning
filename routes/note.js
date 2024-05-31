@@ -234,51 +234,41 @@ export default function Note({navigation}) {
       <GestureHandlerRootView style={styles.container}>
         <AlertNotificationRoot>
           <View className={"bg-[#f2f2f2] flex-1"}>
-            <View className='p-4'>
-              <Text className='text-green-900 font-recmed text-3xl'>{title}</Text>
-              <TouchableOpacity onPress={() => deleteNote()}>
-                  <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Note</Text>
-              </TouchableOpacity>
-              <View className="flex-row gap-x-4">
-                  <MarcusTouchable className="w-12 h-12 shadow-xl shadow-black/25 bg-red-600 rounded-xl p-4" onPress={() => {
-                      deleteNote()
-                  }}>
-                      <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
-                          
-                      </View>
 
-                      <View className='absolute'> 
-                          <Text className='font-montmed text-center text-lg'>{'F'}</Text>
-                      </View>
-                  </MarcusTouchable>
-
-                  <MarcusTouchable className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
-                      openQuestions()
-                  }}>
-                      <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
-
-                      </View>
-
-                      <View className='absolute'> 
-                          <Text className='font-montmed text-center text-lg'>{'Q'}</Text>
-                      </View>
-                  </MarcusTouchable>
-
-                  <MarcusTouchable className="w-12 h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 p-4" onPress={() => {
-                      navigation.navigate('Assistant', {id: noteID})
-                  }}>
-                      <View className={"w-24 h-24 flex justify-center items-center p-4 rounded-xl"}>
-                          
-                      </View>
-
-                      <View className='absolute'> 
-                          <Text className='font-montmed text-center text-lg'>{'A'}</Text>
-                      </View>
-                  </MarcusTouchable>
-              </View>
-            </View>
               
               <ScrollView className='my-4'>
+                <View className='p-4'>
+                  <Text className='text-green-900 font-recmed text-3xl'>{title}</Text>
+                  <TouchableOpacity onPress={() => deleteNote()}>
+                      <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Note</Text>
+                  </TouchableOpacity>
+                  <View className="flex-col gap-y-4">
+                      <MarcusTouchable className="h-12 shadow-xl shadow-black/25 bg-red-600 rounded-xl mx-4" onPress={() => {
+                          deleteNote()
+                      }}>
+                          <View className='flex items-center'> 
+                              <Text className='font-montmed text-center text-lg'>{'F'}</Text>
+                          </View>
+                      </MarcusTouchable>
+
+                      <MarcusTouchable className="h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 mx-4" onPress={() => {
+                          openQuestions()
+                      }}>
+                          <View className='flex items-center'> 
+                              <Text className='font-montmed text-center text-lg'>{'Q'}</Text>
+                          </View>
+                      </MarcusTouchable>
+
+                      <MarcusTouchable className="h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 mx-4" onPress={() => {
+                          navigation.navigate('Assistant', {id: noteID})
+                      }}>
+                          <View className='flex items-center'> 
+                              <Text className='font-montmed text-center text-lg'>{'A'}</Text>
+                          </View>
+                      </MarcusTouchable>
+                  </View>
+                </View>
+
                 <View className='p-4'>
                   <Markdown
                       maxTopLevelChildren={showFullText ? undefined : 6} // Limit the number of top-level children
