@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/marcus_splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0fa02a"
     },
     "assetBundlePatterns": [
       "**/*"
