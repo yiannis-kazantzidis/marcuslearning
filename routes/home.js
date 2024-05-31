@@ -16,7 +16,6 @@ import {
 } from "react";
 import { supabase } from "../supabase/supabase.js";
 import { useFocusEffect } from "@react-navigation/native";
-import localImage from "../assets/chat/chat-dynamic-color.png";
 import * as Haptics from "expo-haptics";
 import BottomSheet, {
   BottomSheetBackdrop,
