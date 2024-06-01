@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import * as Font from "expo-font";
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
 import Login from "./routes/login";
 import Home from "./routes/home";
@@ -11,7 +10,6 @@ import { View } from "react-native";
 import { supabase } from "./supabase/supabase";
 import userContext from "./components/userContext";
 import Flashcard from "./routes/flashcard";
-import { CardStyleInterpolators } from '@react-navigation/stack';
 import MultipleChoice from "./routes/multiplechoice";
 import ExamQuestion from "./routes/examquestion";
 import Assistant from "./routes/assistant";
