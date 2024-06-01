@@ -75,7 +75,7 @@ Deno.serve(async (req) => {
       model: 'llama-3-sonar-small-32k-online',
       messages: [
         {role: 'system', content: prompt},
-        {role: 'user', content: `Question: ${questions.questions[id].question} Rubric: ${rubrics} user Answer: ${answer}`}
+        {role: 'user', content: `Question: ${questions.questions[id].question} Rubric: ${markScheme} user Answer: ${answer}`}
       ]
     })
   };

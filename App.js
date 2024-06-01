@@ -3,7 +3,6 @@ import * as Font from "expo-font";
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
-import SplashScreen from "./components/splash";
 import Login from "./routes/login";
 import Home from "./routes/home";
 import Folder from "./routes/folder";
@@ -105,6 +104,7 @@ export default function App() {
         "postgres_changes",
         { event: "*", schema: "public", table: "notes", filter: `user_id=eq.${userID}` },
         (payload) => {
+          console.log('notes changed ' + userID)
           initnotes(userID);
           console.log("Received update:", payload);
         },
@@ -116,7 +116,7 @@ export default function App() {
         supabase.removeChannel(channel);
       }
     };
-  }, []);
+  }, [userID]);
   
   useEffect(() => {
     const initfolders = async (userId) => {
@@ -153,7 +153,7 @@ export default function App() {
   }, [userID]);
 
   if (!fontsLoaded) {
-    return <SplashScreen />;
+    return <View></View>;
   }
 
   return (

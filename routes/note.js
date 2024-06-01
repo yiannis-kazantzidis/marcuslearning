@@ -23,6 +23,7 @@ import {
     SlidingDot,
 } from 'react-native-animated-pagination-dots';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import { uid } from 'uid';
 
 export default function Note({navigation}) {
     const [showFullText, setShowFullText] = useState(false);
@@ -38,9 +39,10 @@ export default function Note({navigation}) {
     const {width} = useWindowDimensions();
     const scrollX = useRef(new Animated.Value(0)).current;
     const renderItem = useCallback(
-      (item) => {
+      (item, index) => {
         return (
           <ContextMenu
+            key={index} // Use index as the key
             actions={[{ title: "Delete Flashcard", destructive: true }, { title: "Edit Flashcard" }]}
             onPress={async(e) => {
               console.log('flashcard deleted' + e.nativeEvent.index)
@@ -52,7 +54,7 @@ export default function Note({navigation}) {
                   <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
                     <Text className='font-montmed'>{item.item.front}</Text>
                   </View>
-
+    
                   <View className='border-2 border-gray-400 text-center' style={styles.innerContainer}>
                     <Text className='font-montregular'>{item.item.back}</Text>
                   </View>
@@ -180,7 +182,12 @@ export default function Note({navigation}) {
           const flashcardHolder = []
           const flashcards = JSON.parse(flashCardsData[0].flashcards)
 
-          setFlashcards(flashcards.flashcards)
+          const flashcardsWithKeys = flashcards.flashcards.map((flashcard) => ({
+            ...flashcard,
+            key: uid(10), // Generate a unique 10-character ID
+          }));
+
+          setFlashcards(flashcardsWithKeys)
       }
     }, [flashCardsData])
 
@@ -238,32 +245,29 @@ export default function Note({navigation}) {
               
               <ScrollView className='my-4'>
                 <View className='p-4'>
-                  <Text className='text-green-900 font-recmed text-3xl'>{title}</Text>
-                  <TouchableOpacity onPress={() => deleteNote()}>
-                      <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Note</Text>
-                  </TouchableOpacity>
+                  <Text className='text-green-900 font-recmed text-3xl mb-4'>{title}</Text>
                   <View className="flex-col gap-y-4">
-                      <MarcusTouchable className="h-12 shadow-xl shadow-black/25 bg-red-600 rounded-xl mx-4" onPress={() => {
+                      <MarcusTouchable className="h-12 shadow-sm flex justify-center shadow-black/25 bg-red-600 rounded-xl" onPress={() => {
                           deleteNote()
                       }}>
-                          <View className='flex items-center'> 
-                              <Text className='font-montmed text-center text-lg'>{'F'}</Text>
+                          <View className='px-4'> 
+                              <Text className='font-montmed text-xl text-white'>{'Delete Note'}</Text>
                           </View>
                       </MarcusTouchable>
 
-                      <MarcusTouchable className="h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 mx-4" onPress={() => {
+                      <MarcusTouchable className="h-12 shadow-sm flex justify-center shadow-black/25 bg-[#f2f2f2] rounded-xl" onPress={() => {
                           openQuestions()
                       }}>
-                          <View className='flex items-center'> 
-                              <Text className='font-montmed text-center text-lg'>{'Q'}</Text>
+                          <View className='px-4'> 
+                              <Text className='font-montmed text-xl text-md'>{'Test'}</Text>
                           </View>
                       </MarcusTouchable>
 
-                      <MarcusTouchable className="h-12 shadow-xl shadow-black/25 bg-[#f2f2f2] rounded-xl border-2 border-green-800 mx-4" onPress={() => {
+                      <MarcusTouchable className="h-12 shadow-sm flex justify-center shadow-black/25 bg-[#f2f2f2] rounded-xl" onPress={() => {
                           navigation.navigate('Assistant', {id: noteID})
                       }}>
-                          <View className='flex items-center'> 
-                              <Text className='font-montmed text-center text-lg'>{'A'}</Text>
+                          <View className='px-4'> 
+                              <Text className='font-montmed text-xl'>{'Assistant'}</Text>
                           </View>
                       </MarcusTouchable>
                   </View>
@@ -319,12 +323,12 @@ export default function Note({navigation}) {
                 <View className='flex flex-row mt-5 gap-x-2 items-center'>
                   <Text className='font-recmed text-3xl text-green-800 pl-4'>Exam Questions</Text>
                   <MarcusTouchable onPress={() => {
-                            Dialog.show({
-                              type: ALERT_TYPE.WARNING,
-                              title: <Text className='font-montsemibold'>This Feature is in Beta</Text>,
-                              textBody: <Text className='font-montmed'>Marcus may provide inaccurate marking and feedback on exam questions, its recommended you assess the accuracy of the mark given yourself.</Text>,
-                              button: <Text className='font-montmed'>Close</Text>,
-                            })
+                    Dialog.show({
+                      type: ALERT_TYPE.WARNING,
+                      title: <Text className='font-montsemibold'>This Feature is in Beta</Text>,
+                      textBody: <Text className='font-montmed'>Marcus may provide inaccurate marking and feedback on exam questions, its recommended you assess the accuracy of the mark given yourself.</Text>,
+                      button: <Text className='font-montmed'>Close</Text>,
+                    })
                   }} className='bg-green-600/20 rounded-lg px-2 py-1 border-2 border-green-600'>
                     <Text className='font-montmed text-green-800'>BETA</Text>
                   </MarcusTouchable>
@@ -335,7 +339,7 @@ export default function Note({navigation}) {
                       {
                         questions ? questions.questions.map((v, k) => {
                           return (
-                              <MarcusTouchable key={k} className="h-max shadow-md shadow-black/10 bg-[#f2f2f2] border-2 border-green-800/50 rounded-xl p-4" onPress={() => {
+                              <MarcusTouchable key={k} className="h-max shadow-sm shadow-black/25 bg-[#f2f2f2] rounded-xl p-4" onPress={() => {
                                   navigation.navigate('ExamQuestion', {data: v, noteID, questionID, id: k})
                               }}>                                
                                   <Text className='font-montreg text-md'>{v.question + ' (' + v.markScheme.totalMarks + ' marker)'}</Text>
