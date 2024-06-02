@@ -65,7 +65,7 @@ export default function Assistant({navigation}) {
         }
 
         speechStopRef.current = true
-      }, 2000);
+      }, 1500);
     };
   
     const onSpeechStarted = () => {

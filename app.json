@@ -1,23 +1,24 @@
 {
   "expo": {
-    "name": "Marcus",
+    "name": "Marcus - Revision made easy",
     "slug": "marcuslearning",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/marcus.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/marcus_splash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0fa02a"
+      "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.yiannisk.marcuslearning",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {

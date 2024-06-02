@@ -26,6 +26,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import img from "../assets/folder-new/new-folder-dynamic-gradient.png";
 import userContext from "../components/userContext.js";
 import MarcusTouchable from "../components/MarcusTouchable.js";
+import AnimatedLoader from 'react-native-animated-loader';
 
 export default function Home({ navigation }) {
   const { userID, folders, setFolders } = useContext(userContext);
@@ -34,6 +35,7 @@ export default function Home({ navigation }) {
   const [subjectName, setSubjectName] = useState("");
   const [subjects, setSubjects] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [foldersLoading, setFoldersLoading] = useState(true)
   const filteredFolders =
   folders && folders.filter((obj) => obj.parent_id === null);
 
@@ -81,8 +83,9 @@ export default function Home({ navigation }) {
   };
 
   useEffect(() => {
-    console.log('folders updated')
-
+    if (folders) {
+      setFoldersLoading(false)
+    }
   }, [folders])
 
 
@@ -103,6 +106,14 @@ export default function Home({ navigation }) {
 
   const handleOpenPress = () => bottomSheetRef.current?.expand();
   const handleClosePress = () => bottomSheetRef.current?.close();
+
+  if (foldersLoading) {
+      return (
+        <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" animationStyle={styles.lottie} source={require('../assets/animations/loading.json')} speed={1}>
+          
+        </AnimatedLoader>
+      )
+  }
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -239,6 +250,10 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: "rgba(151, 151, 151, 0.25)",
     fontFamily: "Recoleta-Regular",
+  },
+  lottie: {
+    width: 200,
+    height: 200,
   },
   sheetContainer: {
     flex: 1,

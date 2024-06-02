@@ -6,10 +6,11 @@ import SplashScreen from "../components/splash";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import userContext from '../components/userContext';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import AnimatedLoader from 'react-native-animated-loader';
 
 export default function Login({ navigation }) {
     const { setUserID } = useContext(userContext);
-    const [authLoading, setAuthLoading] = useState(true);
+    const [authLoading, setAuthLoading] = useState(false);
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
 
@@ -48,25 +49,29 @@ export default function Login({ navigation }) {
     };
 
     const checkAuth = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
+        setAuthLoading(true)
 
-        await setAuthLoading(false);
+        const { data: { session } } = await supabase.auth.getSession();
 
         if (session?.user) {
             setUserID(session.user.id);
             const value = JSON.parse(await AsyncStorage.getItem('onboarding_finished'));
-
             if (value?.completed) {
                 console.log(value);
+                setAuthLoading(false)
                 await navigation.navigate("Home");
             } else {
                 const jsonValue = JSON.stringify({ completed: true });
                 await AsyncStorage.setItem('onboarding_finished', jsonValue);
+                setAuthLoading(false)
                 await navigation.navigate("Onbarding");
             }
 
             return null;
+        } else {
+            setAuthLoading(false)
         }
+
     };
 
     const handleAppleSignIn = async () => {
@@ -129,7 +134,7 @@ export default function Login({ navigation }) {
         }
     };
 
-    const refreshAppleToken = async () => {
+    const refreshAppleTokenSilently = async () => {
         try {
             const storedIdentityToken = await AsyncStorage.getItem('appleIdentityToken');
             const storedSession = await AsyncStorage.getItem('supabaseSession');
@@ -140,7 +145,9 @@ export default function Login({ navigation }) {
                 const now = new Date().getTime() / 1000; // Get current time in seconds
     
                 if (expiresAt < now) {
-                    const newCredential = await AppleAuthentication.refreshAsync();
+                    const newCredential = await AppleAuthentication.refreshAsync({
+                        requestedOperation: AppleAuthentication.AppleAuthenticationOperation.REFRESH
+                    });
     
                     if (newCredential.identityToken) {
                         await AsyncStorage.setItem('appleIdentityToken', newCredential.identityToken);
@@ -170,13 +177,21 @@ export default function Login({ navigation }) {
                 const session = JSON.parse(storedSession);
                 await supabase.auth.setSession(session);
 
-                await refreshAppleToken();
-                checkAuth()
+                await refreshAppleTokenSilently();
+                await checkAuth()
             }
         };
 
         initApp();
     }, []);
+
+    if (authLoading) {
+        return (
+          <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" animationStyle={styles.lottie} source={require('../assets/animations/loading.json')} speed={1}>
+            
+          </AnimatedLoader>
+        )
+    }
 
     return (
         <View className={"bg-[#f2f2f2] flex-1 justify-center items-center"}>
@@ -203,8 +218,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    lottie: {
+        width: 200,
+        height: 200,
+    },
     button: {
         width: 220,
         height: 64,
     },
 });
+

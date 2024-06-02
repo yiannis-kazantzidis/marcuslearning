@@ -171,7 +171,7 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ headerShown: true }}
+            options={{ headerShown: true, headerLeft: () => null }}
           />
           <Stack.Screen
             name="Folder"
