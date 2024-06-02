@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
   }
   
   const { id, questionID, userID, answer, noteID } = await req.json()
-  const prompt = "Please assess the given answer against the marking scheme provided, and also your own access to helpful information on the web that can aid accurate marking. determine if the answer meets the specified criteria. After evaluating the answer against the marking scheme, sum up the marks you award out of the total marks available for the question. Provide your assessment in the following format:{ mark: (total marks awarded based on how well you think the answer satisfies the marking scheme), feedback: '(concise feedback on the answer's strengths and areas for improvement (if any))'}."
+  const prompt = "Please assess the given answer against the marking scheme provided, and also your own access to helpful information on the web that can aid accurate marking. determine if the answer meets the specified criteria. After evaluating the answer against the marking scheme, return the amount of marks you award based on the criteria (the total amount of marks are 4). Provide your assessment in the following JSON object format:{ mark: (total marks awarded based on how well you think the answer satisfies the marking scheme), feedback: '(concise feedback on the answer's strengths and areas for improvement (if any))'}. Your response must be in a JSON string please."
 
   console.log(id, questionID, userID, answer, noteID)
 
@@ -80,19 +80,20 @@ Deno.serve(async (req) => {
     })
   };
     
-  fetch('https://api.perplexity.ai/chat/completions', options)
-    .then(response => response.json())
-    .then(async response => {
-        const text = response.choices[0].message.content
-        
-        const repaired = await extractJSON(text)
+  const response = await fetch('https://api.perplexity.ai/chat/completions', options)
+  
+  if (response.ok) {
+    const data = await response.json()
+    const text = data.choices[0].message.content
+    console.log('output response' + text)
 
-        return new Response(JSON.stringify({ text: JSON.stringify(repaired) }), {
-          headers: { "Content-Type": "application/json" },
-          status: 200
-        });
-    })
-    .catch(err => console.error(err));
+    const repaired = await extractJSON(text)
+
+    return new Response(JSON.stringify({ text: repaired }), {
+      headers: { "Content-Type": "application/json" },
+      status: 200
+    });
+  }
 })
 
 /* To invoke locally:

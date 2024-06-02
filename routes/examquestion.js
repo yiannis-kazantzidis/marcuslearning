@@ -109,47 +109,43 @@ export default function ExamQuestion({navigation}) {
 
     }, [answer])
     
+    const markQuestion = async () => {
+      if (!answer) {
+        return;
+      }
 
+      setLoading(true);
+      try {
+        console.log('called marking')
 
-    const markQuestion = async() => {
-        if (!answer) {
-            return
+        const response = await fetch(
+          "https://kqouyqkdkkihmwezwjxy.supabase.co/functions/v1/markQuestion",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id, questionID, userID, answer, noteID }),
+          }
+        );
+    
+        if (response.ok) {
+          const data = await response.json();
+          console.log('data is here')
+          console.log('here is the data :' + data)
+          const parsedData = data.text; // The response body is already a JSON string
+          setMarkData(parsedData);
+          console.log(parsedData);
+        } else {
+          throw new Error("Failed to extract text");
         }
-
-        setLoading(true)
-
-        try {
-            const response = await fetch(
-                "https://kqouyqkdkkihmwezwjxy.supabase.co/functions/v1/markQuestion",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ id, questionID, userID, answer, noteID }),
-                },
-            );
-
-            if (response.ok) {
-                const data = await response.json();
-                const parsedData = JSON.parse(data.text)
-                setMarkData(parsedData)
-                console.log(parsedData)
-            } else {
-                throw new Error("Failed to extract text");
-            }
-        }
-
-        catch (error) {
-            console.log(error)
-        }
-
-        finally {
-            console.log('finished')
-            setLoading(false)
-        }
-
-    }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        console.log("finished");
+        setLoading(false);
+      }
+    };
 
     if (loading) {
         return (
@@ -217,8 +213,8 @@ export default function ExamQuestion({navigation}) {
                 className={`inline-flex flex-row items-center justify-center max-w-[256px] ${
                   loading ? 'bg-[#007d56]/25' : 'bg-[#007d56]'
                 } rounded-lg pt-1 px-5 py-2 w-full`}
-                onPress={() => {
-                  markQuestion();
+                onPress={async () => {
+                  await markQuestion();
                 }}
               >
                 <Text className={"font-montmed text-white text-center text-2xl"}>

@@ -24,6 +24,7 @@ import {
 } from 'react-native-animated-pagination-dots';
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { uid } from 'uid';
+import AnimatedLoader from 'react-native-animated-loader';
 
 export default function Note({navigation}) {
     const [showFullText, setShowFullText] = useState(false);
@@ -234,7 +235,11 @@ export default function Note({navigation}) {
     }, [])
 
     if (!flashcards) {
-      return <Text>PLEASE WAIT</Text>;
+      return (
+        <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" animationStyle={styles.lottie} source={require('../assets/animations/loading.json')} speed={1}>
+          
+        </AnimatedLoader>
+      )
     }
 
     return (
@@ -431,6 +436,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // backgroundColor: '#e7e7e7',
+  },
+  lottie: {
+    width: 200,
+    height: 200,
   },
   text: {
     flex: 1,
