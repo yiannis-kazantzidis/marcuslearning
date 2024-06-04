@@ -14,18 +14,16 @@ export default function Login({ navigation }) {
     const [email, setEmail] = useState(null);
     const [password, setPassword] = useState(null);
 
-    const checkAndCreateUserRow = async (userId, email, name = null) => {
+    const checkAndCreateUserRow = async (userId, email, name) => {
         try {
           // Check if a row exists with the user's ID
           const { data, error } = await supabase
             .from("users")
             .select("*")
             .eq("id", userId)
-            .single();
       
           if (error) {
             console.error("Error checking user row:", error);
-            return;
           }
       
           // If no row exists, insert a new one
@@ -83,6 +81,8 @@ export default function Login({ navigation }) {
                 ],
             });
 
+            setAuthLoading(true)
+
             console.log('id token ' + credential.identityToken)
             console.log(credential.fullName)
             console.log('this is the full name: ' + credential.fullName.givenName + credential.fullName.familyName + credential.fullName.nickname)
@@ -104,7 +104,7 @@ export default function Login({ navigation }) {
                     console.log('there is no error')
                     const userEmail = data.user.user_metadata.email;
                     const userID = data.user.id
-                    const name = credential.fullName
+                    const name = credential.givenName
                     console.log(`User's email: ${userEmail}`); // You can use the email here
                     console.log(`User's ID: ${data.user.id}`); // You can use the email here
                     console.log(`User's Name: ${name.givenName}`); // You can use the email here
@@ -176,8 +176,7 @@ export default function Login({ navigation }) {
             if (storedSession && storedIdentityToken) {
                 const session = JSON.parse(storedSession);
                 await supabase.auth.setSession(session);
-
-                await refreshAppleTokenSilently();
+                await refreshAppleTokenSilently()
                 await checkAuth()
             }
         };
