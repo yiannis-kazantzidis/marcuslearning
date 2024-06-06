@@ -262,7 +262,7 @@ export default function Notes({ navigation }) {
         {filteredNotes[0] ? (
           <ScrollView className='px-4 my-4'>
             <View className="flex-col gap-y-2">
-              {filteredNotes.map((v, k) => {
+              {filteredNotes.reverse().map((v, k) => {
                   return (
                     <MarcusTouchable onPress={() =>
                       navigation.navigate("Note", {

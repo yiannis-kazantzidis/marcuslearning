@@ -137,7 +137,7 @@ export default function Files({ navigation }) {
         {filteredFolders[0] ? (
           <ScrollView className='px-4 my-4'>
             <View className="flex-col gap-y-2">
-              {filteredFolders.map((v, k) => {
+              {filteredFolders.reverse().map((v, k) => {
                   return (
                     <MarcusTouchable
                       key={k}

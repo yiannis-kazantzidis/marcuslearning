@@ -135,7 +135,7 @@ export default function Home({ navigation }) {
             </Text>
 
             {filteredFolders
-              ? filteredFolders.map((v, k) => {
+              ? filteredFolders.reverse().map((v, k) => {
                   return (
                     <MarcusTouchable
                       key={k}

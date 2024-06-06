@@ -186,8 +186,6 @@ Deno.serve(async (req) => {
                 }
             }
 
-
-
             const createMultipleChoice = async() => {
                 const prompt = "Create a set of multiple choice questions based on the given text, covering the most important information. Each question should have one correct answer and three plausible but incorrect answers that are related to the topic but still wrong. You MUST fact check the correct answers you give and make sure they are correct, no mistakes are allowed. Randomize the answer order. Return your response with the questions as a stringified JSON object with a 'questions' array. Example question format: {'question': 'What is the process by which plants convert sunlight into energy', 'correct_answer': (the unique id (uid) of the answers array that has the correct answer), answers: [{answer: 'Chlorophyll absorption', uid: (a unique id), {answer: 'Photosynthesis', uid: (a unique id)}, {answer: 'Cellular respiration', uid: (a unique id)}, {answer: 'Light refraction', uid: (unqiue id)}]}. Also you should aim to give atleast 5 different questions but do as many as you think is appropriate regarding the length and context of the text given. You also should re-word the correct answer to emphasise understanding over memorisiation. Only return the JSON data, nothing else."
 
@@ -234,8 +232,8 @@ Deno.serve(async (req) => {
                     })
                   };
                   
-                fetch('https://api.perplexity.ai/chat/completions', options)
-                .then(response => response.json())
+                await fetch('https://api.perplexity.ai/chat/completions', options)
+                .then(async response => await response.json())
                 .then(async response => {
                     console.log('create questions returned: ' + response)
                     const questions = response.choices[0].message.content
