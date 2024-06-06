@@ -59,6 +59,8 @@ export default function Home({ navigation }) {
       return null;
     }
 
+    console.log('user id' + userID)
+
     setLoading(true);
 
     const response = await fetch(

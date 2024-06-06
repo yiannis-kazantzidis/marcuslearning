@@ -45,8 +45,6 @@ export default function Notes({ navigation }) {
   const [snap, setSnap] = useState('CONTENT_HEIGHT');
   const [sp, setSp] = useState(['CONTENT_HEIGHT']);
 
-
-
   const handleSnapPointChange = (changeVal) => {
     setSnap(changeVal || '35%');
   };
@@ -251,7 +249,7 @@ export default function Notes({ navigation }) {
 
   if (loading) {
     return (
-        <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" animationStyle={styles.lottie} source={require('../assets/animations/longloading.json')} speed={1}>
+        <AnimatedLoader visible={true} overlayColor="rgba(255,255,255,0.75)" animationStyle={styles.lottie} source={require('../assets/animations/loading.json')} speed={1}>
             <Text className='font-recmed text-2xl text-green-800 p-4'>Generating Notes...</Text>
         </AnimatedLoader>
     )

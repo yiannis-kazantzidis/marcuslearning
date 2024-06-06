@@ -15,8 +15,12 @@ export default function Login({ navigation }) {
     const [password, setPassword] = useState(null);
 
     const checkAndCreateUserRow = async (userId, email, name) => {
+        console.log('checking status')
+        const usn = name || ''
         try {
           // Check if a row exists with the user's ID
+          console.log('checking status....')
+
           const { data, error } = await supabase
             .from("users")
             .select("*")
@@ -27,13 +31,17 @@ export default function Login({ navigation }) {
           }
       
           // If no row exists, insert a new one
-          if (!data) {
+          if (!data[0]) {
+            console.log('checking status.... row exists')
+
+            console.log(userId, email, name)
+
             const { error } = await supabase
               .from("users")
-              .insert({ id: userId, email: email, username: name });
+              .insert({ id: userId, email: email, username: usn });
       
-            if (insertError) {
-              console.error("Error inserting user row:", insertError);
+            if (error) {
+              console.error("Error inserting user row:", usn);
               return;
             }
       
@@ -104,11 +112,10 @@ export default function Login({ navigation }) {
                     console.log('there is no error')
                     const userEmail = data.user.user_metadata.email;
                     const userID = data.user.id
-                    const name = credential.givenName
+                    const name = credential.givenName || ''
                     console.log(`User's email: ${userEmail}`); // You can use the email here
                     console.log(`User's ID: ${data.user.id}`); // You can use the email here
-                    console.log(`User's Name: ${name.givenName}`); // You can use the email here
-                    console.log(`User's Name Object: ${name}`); // You can use the email here
+
 
 
 
@@ -174,8 +181,6 @@ export default function Login({ navigation }) {
             const storedIdentityToken = await AsyncStorage.getItem('appleIdentityToken');
 
             if (storedSession && storedIdentityToken) {
-                const session = JSON.parse(storedSession);
-                await supabase.auth.setSession(session);
                 await refreshAppleTokenSilently()
                 await checkAuth()
             }

@@ -98,7 +98,7 @@ export default function Files({ navigation }) {
   };
 
   const deleteFolder = async () => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("folders")
       .delete()
       .eq("id", id);
@@ -109,7 +109,12 @@ export default function Files({ navigation }) {
       if (!parent_id) {
         navigation.navigate("Home", { id: parent_id, name: name });
       } else {
-        navigation.navigate("Folder", { id: parent_id, name: name });
+        const { data, error } = await supabase
+        .from("folders")
+        .select('name')
+        .eq("id", parent_id);
+
+        navigation.navigate("Folder", { id: parent_id, name: data[0].name });
       }
     }
   };
