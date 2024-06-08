@@ -27,6 +27,7 @@ import img from "../assets/folder-new/new-folder-dynamic-gradient.png";
 import userContext from "../components/userContext.js";
 import MarcusTouchable from "../components/MarcusTouchable.js";
 import AnimatedLoader from 'react-native-animated-loader';
+import NavigationMenu from "../components/navigationMenu.js";
 
 export default function Home({ navigation }) {
   const { userID, folders, setFolders } = useContext(userContext);
@@ -119,15 +120,14 @@ export default function Home({ navigation }) {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <View className={"bg-[#f2f2f2] flex-1"}>
-        <View className={"w-full h-24 flex justify-center p-5"}>
+      <NavigationMenu>
           <Text
-            className={"font-recmed text-green-800 text-5xl text-left"}
+            className={"font-montmed text-green-800 text-5xl text-left"}
           >
             Marcus
           </Text>
-        </View>
-
+      </NavigationMenu>
+      <View className={"bg-[#f2f2f2] flex-1"}>
         <View className={" px-5 flex flex-col gap-y-6"}>
           <View className={"flex flex-col gap-y-2"}>
             <Text className={"font-recregular text-2xl text-[#007d56]"}>

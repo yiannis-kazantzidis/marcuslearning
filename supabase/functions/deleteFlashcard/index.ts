@@ -23,9 +23,11 @@ Deno.serve(async (req) => {
     console.log('ERROR UPDATING FLASHCARDS: ' + error)
   }
 
+
   const cardsObj = JSON.parse(data[0].flashcards)
   const id = data[0].id
   const flashcards = cardsObj.flashcards
+  console.log('id: ' + cardID)
 
   const filteredArray = flashcards.slice(0, cardID).concat(flashcards.slice(cardID + 1));
 

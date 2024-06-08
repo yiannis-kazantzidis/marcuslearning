@@ -25,6 +25,7 @@ import {
 import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 import { uid } from 'uid';
 import AnimatedLoader from 'react-native-animated-loader';
+import NavigationMenu from "../components/navigationMenu";
 
 export default function Note({navigation}) {
     const [showFullText, setShowFullText] = useState(false);
@@ -40,14 +41,14 @@ export default function Note({navigation}) {
     const {width} = useWindowDimensions();
     const scrollX = useRef(new Animated.Value(0)).current;
     const renderItem = useCallback(
-      (item, index) => {
+      (item) => {
         return (
           <ContextMenu
-            key={index} // Use index as the key
-            actions={[{ title: "Delete Flashcard", destructive: true }, { title: "Edit Flashcard" }]}
+            key={item.index} // Use index as the key
+            actions={[{ title: "Delete Flashcard", destructive: true }]}
             onPress={async(e) => {
-              console.log('flashcard deleted' + e.nativeEvent.index)
-              await deleteFlashcard(e.nativeEvent.index)
+              console.log('flashcard deleted' + item.index)
+              await deleteFlashcard(item.index)
             }}
           > 
             <View style={[styles.itemContainer, { width }]}>
@@ -244,11 +245,26 @@ export default function Note({navigation}) {
 
     return (
       <GestureHandlerRootView style={styles.container}>
+              <NavigationMenu>
+        <MarcusTouchable onPress={async () => {
+          navigation.goBack()
+
+        }
+        } className="border-2 border-black/5 h-10 rounded-xl flex flex-row gap-x-1 items-center p-1 bg-white/25 px-2 w-full">
+          <View
+            className={
+              "p-2 bg-green-600/70 flex justify-center items-center rounded-lg max-w-max"
+            }
+          >
+          </View>
+            <Text className='font-montmed text-md pl-2 mr-8'>Back</Text>
+        </MarcusTouchable> 
+      </NavigationMenu>
         <AlertNotificationRoot>
           <View className={"bg-[#f2f2f2] flex-1"}>
 
               
-              <ScrollView className='my-4'>
+              <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} className='my-4'>
                 <View className='p-4'>
                   <Text className='text-green-900 font-recmed text-3xl mb-4'>{title}</Text>
                   <View className="flex-col gap-y-4">
@@ -472,7 +488,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 40,
+    padding: 20,
     marginTop: 40,
     marginBottom: 5,
     height: 160,

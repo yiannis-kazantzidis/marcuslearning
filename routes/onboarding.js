@@ -13,7 +13,7 @@ export default function Onbarding({navigation}) {
             _id : '2',
             title: <Text className='font-recregular text-green-900'>Youtube to Notes, in Seconds</Text>,
             description: 'Turn a youtube video of a lesson strait into revision material, its just that easy.',
-            image: <LottieView autoPlay style={styles.lottie} source={require('../assets/animations/youtube.json')} />
+            image: <LottieView autoPlay speed={.5} style={styles.lottie} source={require('../assets/animations/youtube.json')} />
 
         },
         {

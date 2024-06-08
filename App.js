@@ -171,18 +171,18 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ headerShown: true, headerLeft: () => null }}
+            options={{ headerShown: false, headerLeft: () => null }}
           />
           <Stack.Screen
             name="Folder"
             component={Folder}
-            options={{ headerShown: true }}
+            options={{ headerShown: false }}
           />
 
           <Stack.Screen
             name="Note"
             component={Note}
-            options={{ headerShown: true }}
+            options={{ headerShown: false }}
           />      
 
           <Stack.Screen

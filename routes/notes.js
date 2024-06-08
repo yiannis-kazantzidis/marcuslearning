@@ -271,15 +271,15 @@ export default function Notes({ navigation }) {
                         content: v.content,
                         folder_id: v.folder_id,
                       })
-                    } key={k} className="border-2 border-black/5 h-14 rounded-xl flex flex-row gap-x-1 items-center p-1 bg-white/25 px-2">
+                    } key={k} className="border-2 border-black/5 h-14 rounded-xl flex flex-row gap-x-1 items-center p-1 bg-white/25 px-2 w-full">
 
                     <View
                       className={
-                        "p-4 bg-green-600/70 flex justify-center items-center rounded-lg"
+                        "p-4 bg-green-600/70 flex justify-center items-center rounded-lg max-w-max"
                       }
                     >
                     </View>
-                        <Text className='font-montmed text-md pl-2'>{v.title}</Text>
+                        <Text className='font-montmed text-md pl-2 mr-8'>{v.title}</Text>
                     </MarcusTouchable>
                   );
                 })

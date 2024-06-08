@@ -2,12 +2,12 @@
   "expo": {
     "name": "Marcus - Revision made easy",
     "slug": "marcuslearning",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
-    "icon": "./assets/marcus.png",
+    "icon": "./assets/marcus_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/marcus_splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

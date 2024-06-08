@@ -16,7 +16,7 @@ export default function Login({ navigation }) {
 
     const checkAndCreateUserRow = async (userId, email, name) => {
         console.log('checking status')
-        const usn = name || ''
+
         try {
           // Check if a row exists with the user's ID
           console.log('checking status....')
@@ -38,10 +38,10 @@ export default function Login({ navigation }) {
 
             const { error } = await supabase
               .from("users")
-              .insert({ id: userId, email: email, username: usn });
+              .insert({ id: userId, email: email, username: name });
       
             if (error) {
-              console.error("Error inserting user row:", usn);
+              console.error("Error inserting user row:", error);
               return;
             }
       
@@ -112,7 +112,7 @@ export default function Login({ navigation }) {
                     console.log('there is no error')
                     const userEmail = data.user.user_metadata.email;
                     const userID = data.user.id
-                    const name = credential.givenName || ''
+                    const name = credential.fullName.givenName  || ''
                     console.log(`User's email: ${userEmail}`); // You can use the email here
                     console.log(`User's ID: ${data.user.id}`); // You can use the email here
 
