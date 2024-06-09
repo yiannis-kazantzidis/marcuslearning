@@ -126,9 +126,9 @@ export default function Files({ navigation }) {
     <GestureHandlerRootView style={styles.container}>
       <View className={"bg-[#f2f2f2] flex-1"}>
         <View className='px-4 mt-4'>
-          <TextInput className={"font-recmed text-3xl text-green-900"}>
+          <Text className={"font-recmed text-3xl text-green-900"}>
             {name}
-          </TextInput>
+          </Text>
           <TouchableOpacity onPress={() => deleteFolder()}>
                 <Text className='text-red-600 font-recregular underline text-lg mb-2'>Delete Folder</Text>
           </TouchableOpacity>
