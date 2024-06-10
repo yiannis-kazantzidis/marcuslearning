@@ -194,7 +194,7 @@ PODS:
     - FBLazyVector (= 0.74.1)
     - RCTRequired (= 0.74.1)
     - React-Core (= 0.74.1)
-  - ReachabilitySwift (5.2.2)
+  - ReachabilitySwift (5.2.3)
   - React (0.74.1):
     - React-Core (= 0.74.1)
     - React-Core/DevSupport (= 0.74.1)
@@ -1804,7 +1804,7 @@ SPEC CHECKSUMS:
   RCTDeprecation: efb313d8126259e9294dc4ee0002f44a6f676aba
   RCTRequired: f49ea29cece52aee20db633ae7edc4b271435562
   RCTTypeSafety: a11979ff0570d230d74de9f604f7d19692157bc4
-  ReachabilitySwift: 2128f3a8c9107e1ad33574c6e58e8285d460b149
+  ReachabilitySwift: 7f151ff156cea1481a8411701195ac6a984f4979
   React: 88794fad7f460349dbc9df8a274d95f37a009f5d
   React-callinvoker: 7a7023e34a55c89ea2aa62486bb3c1164ab0be0c
   React-Codegen: af31a9323ce23988c255c9afd0ae9415ff894939
@@ -1864,8 +1864,8 @@ SPEC CHECKSUMS:
   RNSVG: 43b64ed39c14ce830d840903774154ca0c1f27ec
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   sqlite3: 02d1f07eaaa01f80a1c16b4b31dfcbb3345ee01a
-  Yoga: b9a182ab00cf25926e7f79657d08c5d23c2d03b0
+  Yoga: 348f8b538c3ed4423eb58a8e5730feec50bce372
 
-PODFILE CHECKSUM: b984654210c9fd670e82d3d9777353fcb8081ddd
+PODFILE CHECKSUM: fa07b463701abda74da0cea160ca82d0cc9dceef
 
 COCOAPODS: 1.15.2
