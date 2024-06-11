@@ -112,15 +112,12 @@ export default function Login({ navigation }) {
                     console.log('there is no error')
                     const userEmail = data.user.user_metadata.email;
                     const userID = data.user.id
-                    const name = credential.fullName.givenName  || userEmail
+                    const name = credential.fullName.givenName || userEmail
                     console.log(`User's email: ${userEmail}`); // You can use the email here
                     console.log(`User's ID: ${data.user.id}`); // You can use the email here
 
 
-
-
                     await checkAndCreateUserRow(userID, userEmail, name)
-              
 
 
                     console.log('user is signed in');
