@@ -260,7 +260,7 @@ export default function Notes({ navigation }) {
       <View className={"bg-[#f2f2f2] flex-1"}>
 
         {filteredNotes[0] ? (
-          <ScrollView className='px-4 my-4'>
+          <ScrollView bounces={false} className='px-4 my-4'>
             <View className="flex-col gap-y-2">
               {filteredNotes.reverse().map((v, k) => {
                   return (

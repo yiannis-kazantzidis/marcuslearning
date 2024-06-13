@@ -1,15 +1,27 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
+import { createClient } from "npm:@supabase/supabase-js@2.41.1";
 
-// Setup type definitions for built-in Supabase Runtime APIs
-/// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
 console.log("Hello from Functions!")
 
 Deno.serve(async (req) => {
+  const supabaseUrl = "https://kqouyqkdkkihmwezwjxy.supabase.co";
+  const supabaseAnonKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
   const { userID } = await req.json()
 
+  const { data, error } = await supabase.auth.admin.deleteUser(userID)
+
+  if (error) {
+    console.log(error)
+  }
+
+  const response = await supabase
+    .from('users')
+    .delete()
+    .eq('id', userID)
+
+  console.log(response)
 
   return new Response(JSON.stringify({success: true}))
 })

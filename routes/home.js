@@ -57,8 +57,19 @@ export default function Home({ navigation }) {
     setVisible(false)
   }
 
-  const deleteAccount = () => {
+  const deleteAccount = async() => {
     setVisible(false)
+
+    const { error } = await supabase.auth.signOut()
+    navigation.navigate("Login")
+
+    const response = await fetch('https://kqouyqkdkkihmwezwjxy.supabase.co/functions/v1/deleteAccount', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userID }),
+    })
   }
 
   // callbacks
@@ -140,7 +151,7 @@ export default function Home({ navigation }) {
       </NavigationMenu>
       <View className={"bg-[#f2f2f2] flex-1"}>
         <View className={"flex flex-col gap-y-6"}>
-          <ScrollView className={"px-4 flex flex-col gap-y-2 h-[82%]"}>
+          <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} bounces={false} className={"px-4 flex flex-col gap-y-2 h-[82%]"}>
             <Text className={"font-recregular text-2xl text-[#007d56]"}>
               Your Folders
             </Text>

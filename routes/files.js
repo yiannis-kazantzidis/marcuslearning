@@ -135,7 +135,7 @@ export default function Files({ navigation }) {
         </View>
 
         {filteredFolders[0] ? (
-          <ScrollView className='px-4 my-4'>
+          <ScrollView bounces={false} className='px-4 my-4'>
             <View className="flex-col gap-y-2">
               {filteredFolders.reverse().map((v, k) => {
                   return (
