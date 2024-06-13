@@ -65,6 +65,7 @@
     "react-native-circular-progress-indicator": "^4.4.2",
     "react-native-context-menu-view": "^1.16.0",
     "react-native-deck-swiper": "^2.0.17",
+    "react-native-dialog": "^9.3.0",
     "react-native-dotenv": "^3.4.11",
     "react-native-flip-card": "^3.5.7",
     "react-native-gesture-handler": "~2.16.1",

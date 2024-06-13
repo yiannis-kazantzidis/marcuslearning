@@ -5,16 +5,50 @@ import { createClient } from "npm:@supabase/supabase-js@2.41.1";
 
 Deno.serve(async (req) => {
   const supabaseUrl = "https://kqouyqkdkkihmwezwjxy.supabase.co";
-  const supabaseAnonKey = Deno.env.get('supabaseAnonKey');
+  const supabaseAnonKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   const { name, parentID, userID } = await req.json();
+
+  if (userID) {
+    const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", userID)
+  
+    if (error) {
+      console.error("Error checking user row:", userID);
+    }
+  
+    // If no row exists, insert a new one
+    if (!data[0]) {
+      console.log('checking status.... row exists')
+  
+      console.log(userID, userID, name)
+  
+      const { error } = await supabase
+        .from("users")
+        .insert({ id: userID, email: userID + '@gmail.com', username: 'Jeffrey' });
+  
+      if (error) {
+        console.error("Error inserting user row:", error);
+        return;
+      }
+  
+      console.log("New user row inserted successfully");
+    } else {
+      console.log("User row already exists");
+    }
+
+  }
+
+
 
   const { error } = await supabase
     .from("folders")
     .insert({ user_id: userID, name: name, parent_id: parentID });
 
-  const { data, err } = await supabase
+  const { data } = await supabase
     .from("folders")
     .select("*")
     .eq("user_id", userID);

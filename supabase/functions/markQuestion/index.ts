@@ -4,7 +4,7 @@ import { jsonrepair } from 'npm:jsonrepair@3.6.1'
 
 Deno.serve(async (req) => {
   const supabaseUrl = "https://kqouyqkdkkihmwezwjxy.supabase.co";
-  const supabaseAnonKey = Deno.env.get('supabaseAnonKey');
+  const supabaseAnonKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   const ANTRHOPIC_API_KEY = Deno.env.get('ANTRHOPIC_API_KEY')
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
   const anthropic = new Anthropic({

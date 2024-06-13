@@ -11,14 +11,15 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
+		7525975A60BFA62F42918D46 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = BABE8FE23DCCC58B7F577D5A /* PrivacyInfo.xcprivacy */; };
 		96905EF65AED1B983A6B3ABC /* libPods-MarcusRevisionmadeeasy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-MarcusRevisionmadeeasy.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
-		B81960735DCB4365806B1E68 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7065EECA4834A3C9A4816E8 /* noop-file.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		E3042B56578912DF58980B22 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E5AB2171DB91C1C051BB669E /* PrivacyInfo.xcprivacy */; };
+		E843B7B494F44AA28C610169 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F683DA93B47430BA5D582F0 /* noop-file.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F683DA93B47430BA5D582F0 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "MarcusRevisionmadeeasy/noop-file.swift"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* MarcusRevisionmadeeasy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MarcusRevisionmadeeasy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = MarcusRevisionmadeeasy/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = MarcusRevisionmadeeasy/AppDelegate.mm; sourceTree = "<group>"; };
@@ -26,14 +27,13 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MarcusRevisionmadeeasy/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MarcusRevisionmadeeasy/main.m; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-MarcusRevisionmadeeasy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MarcusRevisionmadeeasy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5FE0AD8BFFDE4EEA9F4B59D6 /* MarcusRevisionmadeeasy-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "MarcusRevisionmadeeasy-Bridging-Header.h"; path = "MarcusRevisionmadeeasy/MarcusRevisionmadeeasy-Bridging-Header.h"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-MarcusRevisionmadeeasy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MarcusRevisionmadeeasy.debug.xcconfig"; path = "Target Support Files/Pods-MarcusRevisionmadeeasy/Pods-MarcusRevisionmadeeasy.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-MarcusRevisionmadeeasy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MarcusRevisionmadeeasy.release.xcconfig"; path = "Target Support Files/Pods-MarcusRevisionmadeeasy/Pods-MarcusRevisionmadeeasy.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = MarcusRevisionmadeeasy/SplashScreen.storyboard; sourceTree = "<group>"; };
+		BABE8FE23DCCC58B7F577D5A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = MarcusRevisionmadeeasy/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E5AB2171DB91C1C051BB669E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = MarcusRevisionmadeeasy/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E7ABCD2C155A4AB6B8B2F97D /* MarcusRevisionmadeeasy-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "MarcusRevisionmadeeasy-Bridging-Header.h"; path = "MarcusRevisionmadeeasy/MarcusRevisionmadeeasy-Bridging-Header.h"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F7065EECA4834A3C9A4816E8 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "MarcusRevisionmadeeasy/noop-file.swift"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-MarcusRevisionmadeeasy/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -59,9 +59,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				F7065EECA4834A3C9A4816E8 /* noop-file.swift */,
-				5FE0AD8BFFDE4EEA9F4B59D6 /* MarcusRevisionmadeeasy-Bridging-Header.h */,
-				E5AB2171DB91C1C051BB669E /* PrivacyInfo.xcprivacy */,
+				0F683DA93B47430BA5D582F0 /* noop-file.swift */,
+				E7ABCD2C155A4AB6B8B2F97D /* MarcusRevisionmadeeasy-Bridging-Header.h */,
+				BABE8FE23DCCC58B7F577D5A /* PrivacyInfo.xcprivacy */,
 			);
 			name = MarcusRevisionmadeeasy;
 			sourceTree = "<group>";
@@ -147,13 +147,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MarcusRevisionmadeeasy" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				EE8F1345781A51D7DFB6628C /* [Expo] Configure project */,
+				C6FFD0873426366C2F010026 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				D1C35D8ACD649ABAB4672F0A /* [CP] Embed Pods Frameworks */,
+				D6E86FC41509CD3A30FAF21C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -174,6 +174,8 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
+						DevelopmentTeam = "45UB3NV7WW";
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -203,7 +205,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				E3042B56578912DF58980B22 /* PrivacyInfo.xcprivacy in Resources */,
+				7525975A60BFA62F42918D46 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,25 +291,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MarcusRevisionmadeeasy/Pods-MarcusRevisionmadeeasy-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D1C35D8ACD649ABAB4672F0A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MarcusRevisionmadeeasy/Pods-MarcusRevisionmadeeasy-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MarcusRevisionmadeeasy/Pods-MarcusRevisionmadeeasy-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EE8F1345781A51D7DFB6628C /* [Expo] Configure project */ = {
+		C6FFD0873426366C2F010026 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -326,6 +310,24 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-MarcusRevisionmadeeasy/expo-configure-project.sh\"\n";
 		};
+		D6E86FC41509CD3A30FAF21C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MarcusRevisionmadeeasy/Pods-MarcusRevisionmadeeasy-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MarcusRevisionmadeeasy/Pods-MarcusRevisionmadeeasy-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -336,7 +338,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				B81960735DCB4365806B1E68 /* noop-file.swift in Sources */,
+				E843B7B494F44AA28C610169 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -373,6 +375,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "45UB3NV7WW";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Debug;
 		};
@@ -400,6 +405,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "45UB3NV7WW";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Release;
 		};

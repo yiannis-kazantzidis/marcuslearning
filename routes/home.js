@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Button,
   Image,
+  ScrollView
 } from "react-native";
 import {
   useCallback,
@@ -28,6 +29,7 @@ import userContext from "../components/userContext.js";
 import MarcusTouchable from "../components/MarcusTouchable.js";
 import AnimatedLoader from 'react-native-animated-loader';
 import NavigationMenu from "../components/navigationMenu.js";
+import Dialog from "react-native-dialog";
 
 export default function Home({ navigation }) {
   const { userID, folders, setFolders } = useContext(userContext);
@@ -37,6 +39,7 @@ export default function Home({ navigation }) {
   const [subjects, setSubjects] = useState(null);
   const [loading, setLoading] = useState(false);
   const [foldersLoading, setFoldersLoading] = useState(true)
+  const [visible, setVisible] = useState(false)
   const filteredFolders =
   folders && folders.filter((obj) => obj.parent_id === null);
 
@@ -49,6 +52,14 @@ export default function Home({ navigation }) {
   const handlePresentModalPress = useCallback(() => {
     bottomSheetRef.current?.present();
   }, []);
+
+  const cancel = () => {
+    setVisible(false)
+  }
+
+  const deleteAccount = () => {
+    setVisible(false)
+  }
 
   // callbacks
   const handleSheetChanges = useCallback((index) => {
@@ -128,8 +139,8 @@ export default function Home({ navigation }) {
           </Text>
       </NavigationMenu>
       <View className={"bg-[#f2f2f2] flex-1"}>
-        <View className={" px-5 flex flex-col gap-y-6"}>
-          <View className={"flex flex-col gap-y-2"}>
+        <View className={"flex flex-col gap-y-6"}>
+          <ScrollView className={"px-4 flex flex-col gap-y-2 h-[82%]"}>
             <Text className={"font-recregular text-2xl text-[#007d56]"}>
               Your Folders
             </Text>
@@ -196,8 +207,40 @@ export default function Home({ navigation }) {
                 </Text>
               </View>
             </MarcusTouchable>
+          </ScrollView>
+
+          <View className="flex flex-row justify-between w-screen px-4">
+            <MarcusTouchable className="h-12 shadow-sm flex justify-center shadow-black/25 bg-red-600 rounded-xl" onPress={() => {
+                setVisible(true)
+            }}>
+                <View className='px-4'> 
+                    <Text className='font-montmed text-xl text-white'>{'Delete Account'}</Text>
+                </View>
+            </MarcusTouchable>
+
+            <MarcusTouchable className="h-12 shadow-sm flex justify-center shadow-black/25 bg-green-800 rounded-xl" onPress={async () => {
+                const { error } = await supabase.auth.signOut()
+
+                navigation.navigate("Login")
+
+
+            }}>
+                <View className='px-4'> 
+                    <Text className='font-montmed text-xl text-white'>{'Log out'}</Text>
+                </View>
+            </MarcusTouchable>
           </View>
         </View>
+
+        <Dialog.Container visible={visible}>
+          <Dialog.Title>Account delete</Dialog.Title>
+          <Dialog.Description>
+            Do you want to delete this account? You cannot undo this action.
+          </Dialog.Description>
+          <Dialog.Button label="Cancel" onPress={cancel} />
+          <Dialog.Button label="Delete" onPress={deleteAccount} />
+        </Dialog.Container>
+
         <BottomSheet
           ref={bottomSheetRef}
           snapPoints={[1]} // ********* HERE, Add a default snapPoint 1

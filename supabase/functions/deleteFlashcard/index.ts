@@ -9,7 +9,7 @@ import { createClient } from "npm:@supabase/supabase-js@2.41.1";
 
 Deno.serve(async (req) => {
   const supabaseUrl = "https://kqouyqkdkkihmwezwjxy.supabase.co";
-  const supabaseAnonKey = Deno.env.get('supabaseAnonKey');
+  const supabaseAnonKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   const { noteID, cardID, userID } = await req.json()
